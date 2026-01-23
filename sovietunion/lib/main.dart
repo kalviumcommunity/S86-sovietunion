@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/responsive_home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Soviet Union',
       theme: ThemeData(
         primarySwatch: Colors.red,
@@ -65,6 +67,24 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ElevatedButton(
               onPressed: _toggleState,
               child: const Text('Press for Glory'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ResponsiveHome(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.dashboard),
+              label: const Text('Go to Dashboard'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
             ),
           ],
         ),
