@@ -1,10 +1,79 @@
-# Soviet Union App
 
-This project is a Flutter application.
+# Flutter Environment Setup and First App Run
 
-## Folder Structure
+This project is a Flutter application. Below are the steps followed to set up the Flutter SDK, configure the development environment, and run the first Flutter app on an emulator.
 
-The project follows a feature-driven directory structure to promote modularity and scalability.
+---
+
+## Steps Followed
+
+### 1. Install Flutter SDK
+- Downloaded the Flutter SDK from the [official Flutter installation page](https://docs.flutter.dev/get-started/install).
+- Extracted the SDK to `C:\src\flutter`.
+- Added `C:\src\flutter\bin` to the Windows PATH environment variable.
+- Verified the installation by running:
+  ```
+  flutter doctor
+  ```
+
+### 2. Set Up Android Studio & VS Code
+- Installed Android Studio and ensured the following components were checked:
+  - Android SDK
+  - Android SDK Platform
+  - Android Virtual Device (AVD) Manager
+- Installed Flutter and Dart plugins in Android Studio (via Plugins tab).
+- Installed Flutter and Dart extensions in VS Code from the Marketplace.
+
+### 3. Configure Emulator
+- Opened AVD Manager in Android Studio.
+- Created a new virtual device (Pixel 6, Android 13).
+- Launched the emulator.
+- Verified device detection with:
+  ```
+  flutter devices
+  ```
+
+### 4. Create and Run First Flutter App
+- Created a new Flutter project:
+  ```
+  flutter create first_flutter_app
+  ```
+- Opened the project in Android Studio/VS Code.
+- Ran the app on the emulator:
+  ```
+  flutter run
+  ```
+- Observed the default Flutter counter app running on the emulator.
+
+---
+
+## Setup Verification
+
+### Flutter Doctor Output
+![Flutter Doctor Output](images/flutter_doctor_screenshot.png)
+
+### Running App on Emulator
+![Flutter App Running on Emulator](images/emulator_screenshot.png)
+
+---
+
+## Reflection
+
+**Challenges Faced:**
+- Configuring the PATH variable correctly on Windows.
+- Downloading the correct system image for the emulator.
+- Ensuring all dependencies (Java, Android SDK) were properly installed.
+
+**How this setup prepares for real app development:**
+- With the environment ready, building and testing Flutter apps becomes seamless.
+- Emulator setup allows for rapid UI/UX testing without a physical device.
+- All future Flutter and Firebase integrations can be developed and debugged efficiently.
+
+---
+
+## Project Structure (Reference)
+
+The project follows a feature-driven directory structure to promote modularity and scalability:
 
 ```
 lib/
@@ -15,34 +84,7 @@ lib/
 ├── services/          # Business logic, API calls, and other services
 ```
 
-### Directory Purpose
-
-- **`lib/`**: The main container for all Dart code in the application.
-- **`main.dart`**: The entry point of the application. It initializes the app and sets up the root widget.
-- **`screens/`**: Contains the primary UI screens of the application. Each screen is typically a separate file and represents a major feature or view.
-- **`widgets/`**: Holds reusable UI components that can be shared across multiple screens. This promotes code reuse and a consistent UI.
-- **`models/`**: Defines the data structures for the application. These are plain Dart classes that represent the data fetched from an API or used within the app.
-- **`services/`**: Contains the business logic of the application, such as API communication, database interactions, and other background services.
-
-### Modular App Design
-
-This folder structure supports a modular app design by separating concerns:
-
-- **UI (`screens/`, `widgets/`)**: The UI is kept separate from the business logic, making it easier to modify the look and feel of the app without affecting the underlying functionality.
-- **Data (`models/`)**: By defining data models in one place, we ensure a consistent data structure throughout the app.
-- **Logic (`services/`)**: Centralizing business logic makes it easier to manage and test.
-
-This separation allows different developers to work on different parts of the app simultaneously with minimal conflicts.
-
-### Naming Conventions
-
-To maintain a clean and readable codebase, we follow these naming conventions:
-
-- **Files**: `snake_case.dart` (e.g., `home_screen.dart`, `custom_button.dart`).
-- **Classes**: `PascalCase` (e.g., `HomeScreen`, `CustomButton`).
-- **Widgets**: `PascalCase` for widget classes (e.g., `CustomButton`).
-- **Variables and Functions**: `camelCase` (e.g., `userName`, `fetchUserData()`).
-- **Constants**: `camelCase` or `UPPER_SNAKE_CASE` for top-level constants.
+---
 
 ## Responsive Design Implementation
 
