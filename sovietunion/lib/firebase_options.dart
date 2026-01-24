@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDU2Yd76WlfPRCN_QdiTuS0WENqFcUFoIo',
-    appId: '1:939647790783:web:e17059d50563b46c96a00a',
-    messagingSenderId: '939647790783',
-    projectId: 'sovietunion-8362f',
-    authDomain: 'sovietunion-8362f.firebaseapp.com',
-    storageBucket: 'sovietunion-8362f.firebasestorage.app',
-    measurementId: 'G-W37D8NGMMQ',
+    apiKey: 'AIzaSyBPM3vXgTkEnBsNgiJZxpt8GeDhgp06J20',
+    appId: '1:3382186843:web:3fe5435a1a0b7d2681c07e',
+    messagingSenderId: '3382186843',
+    projectId: 'sovietunion-87718',
+    authDomain: 'sovietunion-87718.firebaseapp.com',
+    storageBucket: 'sovietunion-87718.firebasestorage.app',
+    measurementId: 'G-EWY1KZWJMM',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAk9gP0M4IAfS00ZlBt8y-VloBKJXTQc_I',
-    appId: '1:939647790783:android:9607fbe762fd861a96a00a',
-    messagingSenderId: '939647790783',
-    projectId: 'sovietunion-8362f',
-    storageBucket: 'sovietunion-8362f.firebasestorage.app',
+    apiKey: 'AIzaSyBF2oHrKrWCtHeWjtyixN5LUtAs7syff6Y',
+    appId: '1:3382186843:android:553a8b3f6caa917681c07e',
+    messagingSenderId: '3382186843',
+    projectId: 'sovietunion-87718',
+    storageBucket: 'sovietunion-87718.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBae4zIbcBndtR3Uxk9y2GEywuH5kz6TLs',
-    appId: '1:939647790783:ios:12aa38c69354807496a00a',
-    messagingSenderId: '939647790783',
-    projectId: 'sovietunion-8362f',
-    storageBucket: 'sovietunion-8362f.firebasestorage.app',
+    apiKey: 'AIzaSyBc2PVQ8rf1ZWiKLKkkvqQPMqc72F6Lz5c',
+    appId: '1:3382186843:ios:5a73dcca63eb9de981c07e',
+    messagingSenderId: '3382186843',
+    projectId: 'sovietunion-87718',
+    storageBucket: 'sovietunion-87718.firebasestorage.app',
     iosBundleId: 'com.example.sovietunion',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBae4zIbcBndtR3Uxk9y2GEywuH5kz6TLs',
-    appId: '1:939647790783:ios:12aa38c69354807496a00a',
-    messagingSenderId: '939647790783',
-    projectId: 'sovietunion-8362f',
-    storageBucket: 'sovietunion-8362f.firebasestorage.app',
+    apiKey: 'AIzaSyBc2PVQ8rf1ZWiKLKkkvqQPMqc72F6Lz5c',
+    appId: '1:3382186843:ios:5a73dcca63eb9de981c07e',
+    messagingSenderId: '3382186843',
+    projectId: 'sovietunion-87718',
+    storageBucket: 'sovietunion-87718.firebasestorage.app',
     iosBundleId: 'com.example.sovietunion',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDU2Yd76WlfPRCN_QdiTuS0WENqFcUFoIo',
-    appId: '1:939647790783:web:43ce877377a18c9b96a00a',
-    messagingSenderId: '939647790783',
-    projectId: 'sovietunion-8362f',
-    authDomain: 'sovietunion-8362f.firebaseapp.com',
-    storageBucket: 'sovietunion-8362f.firebasestorage.app',
-    measurementId: 'G-HW1NX4W5JS',
+    apiKey: 'AIzaSyBPM3vXgTkEnBsNgiJZxpt8GeDhgp06J20',
+    appId: '1:3382186843:web:e14ed99ef4e18f6c81c07e',
+    messagingSenderId: '3382186843',
+    projectId: 'sovietunion-87718',
+    authDomain: 'sovietunion-87718.firebaseapp.com',
+    storageBucket: 'sovietunion-87718.firebasestorage.app',
+    measurementId: 'G-2M8D76RW8Q',
   );
 }

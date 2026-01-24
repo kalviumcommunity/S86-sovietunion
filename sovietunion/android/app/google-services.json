@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "939647790783",
-    "project_id": "sovietunion-8362f",
-    "storage_bucket": "sovietunion-8362f.firebasestorage.app"
+    "project_number": "3382186843",
+    "project_id": "sovietunion-87718",
+    "storage_bucket": "sovietunion-87718.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:939647790783:android:9607fbe762fd861a96a00a",
+        "mobilesdk_app_id": "1:3382186843:android:553a8b3f6caa917681c07e",
         "android_client_info": {
           "package_name": "com.example.sovietunion"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAk9gP0M4IAfS00ZlBt8y-VloBKJXTQc_I"
+          "current_key": "AIzaSyBF2oHrKrWCtHeWjtyixN5LUtAs7syff6Y"
         }
       ],
       "services": {

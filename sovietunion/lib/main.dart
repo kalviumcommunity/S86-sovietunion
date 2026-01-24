@@ -1,14 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:sovietunion/screens/dashboard.dart';
-import 'package:sovietunion/screens/login_screen.dart';
-import 'firebase_options.dart';
-void main() async {
+import 'package:firebase_core/firebase_core.dart';
+import 'screens/login_screen.dart';
+
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   runApp(const MyApp());
 }
 
@@ -24,26 +20,28 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
         scaffoldBackgroundColor: Colors.grey[200],
       ),
-      home: const AuthWrapper(),
+      home: const FirebaseInitWrapper(),
     );
   }
 }
 
-class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({super.key});
+class FirebaseInitWrapper extends StatelessWidget {
+  const FirebaseInitWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+    return FutureBuilder(
+      future: Firebase.initializeApp(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (snapshot.hasData) {
-          return const DashboardScreen();
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(child: Text('Firebase init error: ${snapshot.error}')),
+          );
         }
         return const LoginScreen();
       },
