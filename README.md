@@ -58,3 +58,37 @@ The app features a fully responsive dashboard (`responsive_home.dart`) that adap
 - **Overflow Protection**: Proper text truncation and responsive padding prevent UI breaks on any screen size
 
 The responsive dashboard displays shared community spaces (Gym, Community Hall, Swimming Pool, Parking, Study Room, Playground) with an intuitive card-based interface that maintains visual consistency across all devices.
+
+
+# Stateless vs Stateful Widgets in Flutter
+
+## 📌 Project Overview
+This project demonstrates the fundamental difference between **StatelessWidget** and **StatefulWidget** in Flutter. The demo focuses on how static UI elements differ from dynamic, state-driven components and how Flutter efficiently updates the user interface when state changes.
+
+This task is part of **Sprint #2** and aims to strengthen understanding of Flutter’s widget system and reactive UI model.
+
+---
+
+## 🔹 Stateless Widgets
+
+A **StatelessWidget** is a widget that does not store or manage any mutable state. Once it is built, it does not change unless it is rebuilt by its parent widget with new input data.
+
+### When to use StatelessWidget:
+- Static text or labels
+- Icons and images
+- Headers or titles
+- UI elements that do not change during runtime
+
+### Example:
+```dart
+class HeaderWidget extends StatelessWidget {
+  const HeaderWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      'Interactive Counter App',
+      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    );
+  }
+}
