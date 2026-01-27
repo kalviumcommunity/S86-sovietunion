@@ -134,3 +134,33 @@ class HeaderWidget extends StatelessWidget {
     );
   }
 }
+
+
+# Hot Reload, Debug Console, and Flutter DevTools in Flutter
+
+## 📌 Project Overview
+This module demonstrates how to effectively use **Hot Reload**, the **Debug Console**, and **Flutter DevTools** to improve development speed, debugging efficiency, and performance analysis in Flutter applications. These tools are essential for building, testing, and maintaining scalable Flutter apps.
+
+This task is part of **Sprint #2** and focuses on practical usage of Flutter’s development and debugging ecosystem.
+
+---
+
+## ⚡ Hot Reload
+
+**Hot Reload** allows developers to instantly apply code changes to a running Flutter app without restarting it or losing the current state. This makes UI development fast and interactive.
+
+### Steps Performed:
+1. Ran the Flutter app using `flutter run`
+2. Modified a widget’s text and color
+3. Applied Hot Reload using:
+   - Pressing `r` in the terminal
+   - Or clicking the ⚡ Hot Reload button in the IDE
+4. Observed the UI update instantly while preserving app state
+
+### Example:
+```dart
+// Before
+Text('Hello, Flutter!');
+
+// After
+Text('Welcome to Hot Reload!');
