@@ -234,36 +234,210 @@ This project is a Flutter application. Below are the steps followed to set up th
     - Screenshots from this README (`images/responsive_small.png`, `images/responsive_large.png`)
     - Short reflection answering the prompts above
 
-  2. Record a Short Video Demo (1–2 minutes)
+### When to use StatelessWidget:
+- Static text or labels
+- Icons and images
+- Headers or titles
+# Soviet Union App
 
-  - Demonstrate the app adapting across screen sizes and orientations.
-  - Mention how `Row`, `Column`, `Container`, `MediaQuery`, and `Expanded` are used.
-  - Upload to Google Drive, Loom, or YouTube (unlisted) and include the link in your PR description.
+This project is a Flutter application. The sections below include a new lesson for Sprint-2: "Scrollable Views with ListView & GridView" — examples, guidance, and submission notes.
 
-  ---
+## Scrollable Views — ListView & GridView (Sprint-2)
 
-  ## Resources
+Overview
+- This lesson demonstrates how to implement scrollable UIs using `ListView` and `GridView` in Flutter.
+- It includes code snippets, a combined example, and guidance for testing and submission.
 
-  - Flutter Layout Basics: https://flutter.dev/docs/development/ui/layout
-  - Building Responsive Apps in Flutter: https://flutter.dev/docs/development/ui/layout/responsive
-  - MediaQuery Class Reference: https://api.flutter.dev/flutter/widgets/MediaQuery-class.html
+### 1. ListView — Vertical and Horizontal Scrolling
+ListView is used for vertically scrolling lists of widgets. For long or dynamic lists, prefer `ListView.builder` for performance.
 
-  ---
+Basic vertical ListView:
 
-  ## Placeholders / Next Steps
+```dart
+ListView(
+  children: [
+    ListTile(
+      leading: Icon(Icons.person),
+      title: Text('User 1'),
+      subtitle: Text('Online'),
+    ),
+    ListTile(
+      leading: Icon(Icons.person),
+      title: Text('User 2'),
+      subtitle: Text('Offline'),
+    ),
+  ],
+);
+```
 
-  - Add `lib/screens/responsive_layout.dart` (example provided above) if not present.
-  - Add screenshots to `S86-sovietunion/images/responsive_small.png` and `S86-sovietunion/images/responsive_large.png`.
-  - Commit and open PR following the guidelines above.
+Using `ListView.builder` for long lists:
 
-  ---
+```dart
+ListView.builder(
+  itemCount: 10,
+  itemBuilder: (context, index) {
+    return ListTile(
+      leading: CircleAvatar(child: Text('${index + 1}')),
+      title: Text('Item $index'),
+      subtitle: Text('This is item number $index'),
+    );
+  },
+);
+```
 
-  ## Reflection (example answers)
+### 2. GridView — Grids for Images or Cards
+GridView displays scrollable grid layouts. Use `GridView.builder` for large or dynamic grids.
 
-  - **Why is responsiveness important?** Mobile devices vary greatly in screen size and pixel density; responsive design ensures consistent usability and appearance across devices.
-  - **Challenges faced:** Managing proportions and spacing without hard-coded sizes; ensuring text scales and doesn't overflow.
-  - **Improvements:** Use `LayoutBuilder` for even finer control, add breakpoints for multiple widths, and tune typography with `MediaQuery` or `flutter_screenutil`.
+Fixed count example:
 
-  ---
+```dart
+GridView.count(
+  crossAxisCount: 2,
+  crossAxisSpacing: 10,
+  mainAxisSpacing: 10,
+  children: [
+    Container(color: Colors.red, height: 100),
+    Container(color: Colors.green, height: 100),
+    Container(color: Colors.blue, height: 100),
+    Container(color: Colors.yellow, height: 100),
+  ],
+);
+```
 
-  If you'd like, I can also create `lib/screens/responsive_layout.dart` in this repo and add placeholder screenshots. Would you like me to add the example screen file now?
+Using `GridView.builder`:
+
+```dart
+GridView.builder(
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    crossAxisSpacing: 8,
+    mainAxisSpacing: 8,
+  ),
+  itemCount: 8,
+  itemBuilder: (context, index) {
+    return Container(
+      color: Colors.primaries[index % Colors.primaries.length],
+      child: Center(child: Text('Item $index')),
+    );
+  },
+);
+```
+
+### 3. Combined Example (`scrollable_views.dart`)
+Place this example in `lib/screens/scrollable_views.dart` to show both a horizontal `ListView` and a vertical `GridView` on one screen.
+
+```dart
+import 'package:flutter/material.dart';
+
+class ScrollableViews extends StatelessWidget {
+  const ScrollableViews({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Scrollable Views')),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: const Text('ListView Example', style: TextStyle(fontSize: 18)),
+            ),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 150,
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.teal[100 * (index + 2)],
+                    child: Center(child: Text('Card $index')),
+                  );
+                },
+              ),
+            ),
+            const Divider(thickness: 2),
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: const Text('GridView Example', style: TextStyle(fontSize: 18)),
+            ),
+            SizedBox(
+              height: 400,
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: 6,
+                itemBuilder: (context, index) {
+                  return Container(
+                    color: Colors.primaries[index % Colors.primaries.length],
+                    child: Center(
+                      child: Text(
+                        'Tile $index',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+### 4. Testing & Screenshots
+- Run the app on different devices/emulators and verify:
+  - `ListView` scrolls smoothly (horizontal or vertical as used).
+  - `GridView` items are evenly spaced and wrap or scroll as expected.
+- Capture screenshots showing the horizontal list and the grid view.
+
+Add screenshots to this repo (e.g., `assets/screenshots/`) and reference them below.
+
+### 5. Reflection
+- **How they improve efficiency:** `ListView` and `GridView` provide lazy layout engines (especially with builder constructors) that render only visible items, reducing memory and CPU usage.
+- **Why builders are recommended:** `ListView.builder` and `GridView.builder` create widgets on demand, improving performance for large data sets by avoiding building the entire list/grid at once.
+- **Common pitfalls:** Nesting multiple scrollable widgets without constraints, not using `shrinkWrap`/`physics` correctly, and building complex widgets per item without optimization (e.g., expensive rebuilds) can harm performance.
+
+## README Snippets / Screenshots
+- Example ListView and GridView code are shown above.
+- Add screenshots here once captured:
+
+![ListView Example](assets/screenshots/listview_example.png)
+![GridView Example](assets/screenshots/gridview_example.png)
+
+## Submission Guidelines
+
+- Commit message suggestion:
+
+```
+feat: implemented scrollable layouts using ListView and GridView
+```
+
+- PR title suggestion:
+
+```
+[Sprint-2] Scrollable Views with ListView & GridView – TeamName
+```
+
+- PR description should include:
+  - A short summary of the implementation.
+  - Screenshots from this README.
+  - A short reflection on what you learned.
+  - A link to the demo video (1–2 minutes) hosted on Google Drive, Loom, or YouTube (unlisted). Ensure the link is set to "Anyone with the link" and has Edit access for Google Drive.
+
+## Notes
+- This README update focuses on documentation. The example `scrollable_views.dart` is included as a reference snippet; create the file under `lib/screens/` if you want to run the demo.
+
+---
+
+Previous sections about responsive design, widgets, and debugging remain useful and can be referenced as needed.
