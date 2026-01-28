@@ -77,48 +77,206 @@ A **StatelessWidget** is a widget that does not store or manage any mutable stat
 - Static text or labels
 - Icons and images
 - Headers or titles
-- UI elements that do not change during runtime
+# Soviet Union App
 
-### Example:
+This project is a Flutter application. The sections below include a new lesson for Sprint-2: "Scrollable Views with ListView & GridView" — examples, guidance, and submission notes.
+
+## Scrollable Views — ListView & GridView (Sprint-2)
+
+Overview
+- This lesson demonstrates how to implement scrollable UIs using `ListView` and `GridView` in Flutter.
+- It includes code snippets, a combined example, and guidance for testing and submission.
+
+### 1. ListView — Vertical and Horizontal Scrolling
+ListView is used for vertically scrolling lists of widgets. For long or dynamic lists, prefer `ListView.builder` for performance.
+
+Basic vertical ListView:
+
 ```dart
-class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({super.key});
+ListView(
+  children: [
+    ListTile(
+      leading: Icon(Icons.person),
+      title: Text('User 1'),
+      subtitle: Text('Online'),
+    ),
+    ListTile(
+      leading: Icon(Icons.person),
+      title: Text('User 2'),
+      subtitle: Text('Offline'),
+    ),
+  ],
+);
+```
+
+Using `ListView.builder` for long lists:
+
+```dart
+ListView.builder(
+  itemCount: 10,
+  itemBuilder: (context, index) {
+    return ListTile(
+      leading: CircleAvatar(child: Text('${index + 1}')),
+      title: Text('Item $index'),
+      subtitle: Text('This is item number $index'),
+    );
+  },
+);
+```
+
+### 2. GridView — Grids for Images or Cards
+GridView displays scrollable grid layouts. Use `GridView.builder` for large or dynamic grids.
+
+Fixed count example:
+
+```dart
+GridView.count(
+  crossAxisCount: 2,
+  crossAxisSpacing: 10,
+  mainAxisSpacing: 10,
+  children: [
+    Container(color: Colors.red, height: 100),
+    Container(color: Colors.green, height: 100),
+    Container(color: Colors.blue, height: 100),
+    Container(color: Colors.yellow, height: 100),
+  ],
+);
+```
+
+Using `GridView.builder`:
+
+```dart
+GridView.builder(
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 2,
+    crossAxisSpacing: 8,
+    mainAxisSpacing: 8,
+  ),
+  itemCount: 8,
+  itemBuilder: (context, index) {
+    return Container(
+      color: Colors.primaries[index % Colors.primaries.length],
+      child: Center(child: Text('Item $index')),
+    );
+  },
+);
+```
+
+### 3. Combined Example (`scrollable_views.dart`)
+Place this example in `lib/screens/scrollable_views.dart` to show both a horizontal `ListView` and a vertical `GridView` on one screen.
+
+```dart
+import 'package:flutter/material.dart';
+
+class ScrollableViews extends StatelessWidget {
+  const ScrollableViews({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      'Interactive Counter App',
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Scrollable Views')),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: const Text('ListView Example', style: TextStyle(fontSize: 18)),
+            ),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return Container(
+                    width: 150,
+                    margin: const EdgeInsets.all(8),
+                    color: Colors.teal[100 * (index + 2)],
+                    child: Center(child: Text('Card $index')),
+                  );
+                },
+              ),
+            ),
+            const Divider(thickness: 2),
+            Container(
+              padding: const EdgeInsets.all(8),
+              child: const Text('GridView Example', style: TextStyle(fontSize: 18)),
+            ),
+            SizedBox(
+              height: 400,
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: 6,
+                itemBuilder: (context, index) {
+                  return Container(
+                    color: Colors.primaries[index % Colors.primaries.length],
+                    child: Center(
+                      child: Text(
+                        'Tile $index',
+                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
+```
 
+### 4. Testing & Screenshots
+- Run the app on different devices/emulators and verify:
+  - `ListView` scrolls smoothly (horizontal or vertical as used).
+  - `GridView` items are evenly spaced and wrap or scroll as expected.
+- Capture screenshots showing the horizontal list and the grid view.
 
-# Hot Reload, Debug Console, and Flutter DevTools in Flutter
+Add screenshots to this repo (e.g., `assets/screenshots/`) and reference them below.
 
-## 📌 Project Overview
-This module demonstrates how to effectively use **Hot Reload**, the **Debug Console**, and **Flutter DevTools** to improve development speed, debugging efficiency, and performance analysis in Flutter applications. These tools are essential for building, testing, and maintaining scalable Flutter apps.
+### 5. Reflection
+- **How they improve efficiency:** `ListView` and `GridView` provide lazy layout engines (especially with builder constructors) that render only visible items, reducing memory and CPU usage.
+- **Why builders are recommended:** `ListView.builder` and `GridView.builder` create widgets on demand, improving performance for large data sets by avoiding building the entire list/grid at once.
+- **Common pitfalls:** Nesting multiple scrollable widgets without constraints, not using `shrinkWrap`/`physics` correctly, and building complex widgets per item without optimization (e.g., expensive rebuilds) can harm performance.
 
-This task is part of **Sprint #2** and focuses on practical usage of Flutter’s development and debugging ecosystem.
+## README Snippets / Screenshots
+- Example ListView and GridView code are shown above.
+- Add screenshots here once captured:
+
+![ListView Example](assets/screenshots/listview_example.png)
+![GridView Example](assets/screenshots/gridview_example.png)
+
+## Submission Guidelines
+
+- Commit message suggestion:
+
+```
+feat: implemented scrollable layouts using ListView and GridView
+```
+
+- PR title suggestion:
+
+```
+[Sprint-2] Scrollable Views with ListView & GridView – TeamName
+```
+
+- PR description should include:
+  - A short summary of the implementation.
+  - Screenshots from this README.
+  - A short reflection on what you learned.
+  - A link to the demo video (1–2 minutes) hosted on Google Drive, Loom, or YouTube (unlisted). Ensure the link is set to "Anyone with the link" and has Edit access for Google Drive.
+
+## Notes
+- This README update focuses on documentation. The example `scrollable_views.dart` is included as a reference snippet; create the file under `lib/screens/` if you want to run the demo.
 
 ---
 
-## ⚡ Hot Reload
-
-**Hot Reload** allows developers to instantly apply code changes to a running Flutter app without restarting it or losing the current state. This makes UI development fast and interactive.
-
-### Steps Performed:
-1. Ran the Flutter app using `flutter run`
-2. Modified a widget’s text and color
-3. Applied Hot Reload using:
-   - Pressing `r` in the terminal
-   - Or clicking the ⚡ Hot Reload button in the IDE
-4. Observed the UI update instantly while preserving app state
-
-### Example:
-```dart
-// Before
-Text('Hello, Flutter!');
-
-// After
-Text('Welcome to Hot Reload!');
+Previous sections about responsive design, widgets, and debugging remain useful and can be referenced as needed.
