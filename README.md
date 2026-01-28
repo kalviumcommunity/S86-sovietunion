@@ -40,127 +40,230 @@ This project is a Flutter application. Below are the steps followed to set up th
   ```
 - Opened the project in Android Studio/VS Code.
 - Ran the app on the emulator:
-  ```
-  flutter run
-  ```
-- Observed the default Flutter counter app running on the emulator.
+  # Responsive Layouts with Rows, Columns, and Containers
 
----
+  This repository contains a Flutter app that demonstrates how to build responsive layouts using `Container`, `Row`, and `Column`. The goal is to design a screen that adapts smoothly across phone and tablet sizes and both orientations.
 
-## Setup Verification
+  ## Project Title
+  Responsive Layout Demo — Rows, Columns & Containers
 
-### Flutter Doctor Output
-![Flutter Doctor Output](images/flutter_doctor_screenshot.png)
+  ## Short Explanation
+  This sample shows how to structure UI using `Container` for styling, `Row` for horizontal layouts, and `Column` for vertical stacking. Responsiveness is achieved using `MediaQuery`, `Expanded`, and `Flexible` so panels stack on small screens and sit side-by-side on larger screens.
 
-### Running App on Emulator
-![Flutter App Running on Emulator](images/emulator_screenshot.png)
+  ---
 
----
+  ## Task Overview
 
-## Reflection
+  1. Understand Flutter’s Core Layout Widgets
 
-**Challenges Faced:**
-- Configuring the PATH variable correctly on Windows.
-- Downloading the correct system image for the emulator.
-- Ensuring all dependencies (Java, Android SDK) were properly installed.
+  - Container: A flexible box for padding, margin, alignment, color and size.
 
-**How this setup prepares for real app development:**
-- With the environment ready, building and testing Flutter apps becomes seamless.
-- Emulator setup allows for rapid UI/UX testing without a physical device.
-- All future Flutter and Firebase integrations can be developed and debugged efficiently.
+    Example:
 
----
-
-## Project Structure (Reference)
-
-The project follows a feature-driven directory structure to promote modularity and scalability:
-
-```
-lib/
-├── main.dart          # Entry point of your app
-├── screens/           # Individual UI screens for each feature
-├── widgets/           # Reusable UI components shared across the app
-├── models/            # Data models representing the app's data structures
-├── services/          # Business logic, API calls, and other services
-```
-
----
-
-## Responsive Design Implementation
-
-The app features a fully responsive dashboard (`responsive_home.dart`) that adapts seamlessly across different device sizes and orientations:
-
-- **MediaQuery Integration**: Dynamically detects screen width, height, and orientation to adjust layouts
-- **Adaptive Layouts**: 
-  - Phone (portrait): 2-column grid
-  - Tablet (portrait): 3-column grid  
-  - Tablet (landscape): 4-column grid
-- **Flexible Widgets**: Uses `Flexible`, `FittedBox`, and `LayoutBuilder` for smooth scaling
-- **Responsive Typography**: Font sizes and icon sizes automatically adjust for tablets vs phones
-- **Overflow Protection**: Proper text truncation and responsive padding prevent UI breaks on any screen size
-
-The responsive dashboard displays shared community spaces (Gym, Community Hall, Swimming Pool, Parking, Study Room, Playground) with an intuitive card-based interface that maintains visual consistency across all devices.
-
-
-# Stateless vs Stateful Widgets in Flutter
-
-## 📌 Project Overview
-This project demonstrates the fundamental difference between **StatelessWidget** and **StatefulWidget** in Flutter. The demo focuses on how static UI elements differ from dynamic, state-driven components and how Flutter efficiently updates the user interface when state changes.
-
-This task is part of **Sprint #2** and aims to strengthen understanding of Flutter’s widget system and reactive UI model.
-
----
-
-## 🔹 Stateless Widgets
-
-A **StatelessWidget** is a widget that does not store or manage any mutable state. Once it is built, it does not change unless it is rebuilt by its parent widget with new input data.
-
-### When to use StatelessWidget:
-- Static text or labels
-- Icons and images
-- Headers or titles
-- UI elements that do not change during runtime
-
-### Example:
-```dart
-class HeaderWidget extends StatelessWidget {
-  const HeaderWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'Interactive Counter App',
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    ```dart
+    Container(
+      padding: EdgeInsets.all(16),
+      color: Colors.blue,
+      child: Text('This is inside a Container'),
     );
+    ```
+
+  - Row: Arranges children horizontally. Use `mainAxisAlignment` and `crossAxisAlignment`.
+
+    ```dart
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Icon(Icons.home),
+        Icon(Icons.search),
+        Icon(Icons.person),
+      ],
+    );
+    ```
+
+  - Column: Arranges children vertically; commonly used to stack text, images, buttons.
+
+    ```dart
+    Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('Welcome!'),
+        SizedBox(height: 10),
+        ElevatedButton(onPressed: () {}, child: Text('Click Me')),
+      ],
+    );
+    ```
+
+  2. Combine Layout Widgets to Build a Responsive Screen
+
+  Create a screen `lib/screens/responsive_layout.dart` that combines `Container`, `Row`, and `Column` to form a header and two responsive panels. Example implementation:
+
+  ```dart
+  import 'package:flutter/material.dart';
+
+  class ResponsiveLayout extends StatelessWidget {
+    const ResponsiveLayout({super.key});
+
+    @override
+    Widget build(BuildContext context) {
+      final screenWidth = MediaQuery.of(context).size.width;
+      final isLarge = screenWidth >= 600;
+
+      return Scaffold(
+        appBar: AppBar(title: const Text('Responsive Layout')),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.lightBlueAccent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Center(child: Text('Header Section', style: TextStyle(fontSize: 20))),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: isLarge
+                    ? Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              color: Colors.amber,
+                              child: const Center(child: Text('Left Panel')),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Container(
+                              color: Colors.greenAccent,
+                              child: const Center(child: Text('Right Panel')),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              width: double.infinity,
+                              color: Colors.amber,
+                              child: const Center(child: Text('Top Panel')),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Expanded(
+                            child: Container(
+                              width: double.infinity,
+                              color: Colors.greenAccent,
+                              child: const Center(child: Text('Bottom Panel')),
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
   }
-}
+  ```
 
+  This layout includes a header and a two-panel area that becomes side-by-side on wide screens and stacked on narrow screens.
 
-# Hot Reload, Debug Console, and Flutter DevTools in Flutter
+  3. Make Your Layout Responsive
 
-## 📌 Project Overview
-This module demonstrates how to effectively use **Hot Reload**, the **Debug Console**, and **Flutter DevTools** to improve development speed, debugging efficiency, and performance analysis in Flutter applications. These tools are essential for building, testing, and maintaining scalable Flutter apps.
+  - Use `MediaQuery.of(context).size.width` to adapt layout rules.
+  - Use `Expanded` and `Flexible` to allocate space proportionally.
+  - For small devices, stack panels vertically; for larger devices, show side-by-side panels.
 
-This task is part of **Sprint #2** and focuses on practical usage of Flutter’s development and debugging ecosystem.
+  Example snippet using `MediaQuery`:
 
----
+  ```dart
+  double screenWidth = MediaQuery.of(context).size.width;
+  Container(
+    width: screenWidth > 600 ? 500 : double.infinity,
+    color: Colors.blueGrey,
+    child: const Text('Responsive width based on screen size'),
+  );
+  ```
 
-## ⚡ Hot Reload
+  4. Test Across Different Screen Sizes
 
-**Hot Reload** allows developers to instantly apply code changes to a running Flutter app without restarting it or losing the current state. This makes UI development fast and interactive.
+  - Run on a standard phone emulator (Pixel 5) and a tablet emulator (iPad/Pixel C).
+  - Verify proportions, resizing, and no text cut-offs.
+  - Capture screenshots for both small and large screens (portrait and landscape if possible).
 
-### Steps Performed:
-1. Ran the Flutter app using `flutter run`
-2. Modified a widget’s text and color
-3. Applied Hot Reload using:
-   - Pressing `r` in the terminal
-   - Or clicking the ⚡ Hot Reload button in the IDE
-4. Observed the UI update instantly while preserving app state
+  ---
 
-### Example:
-```dart
-// Before
-Text('Hello, Flutter!');
+  ## README Guidelines (This file)
 
-// After
-Text('Welcome to Hot Reload!');
+  Include the following in your README:
+
+  - Project Title and short explanation of your responsive layout.
+  - Code snippets showing `Row`, `Column`, and `Container` usage (see above).
+  - Screenshots:
+
+    - Small screen (phone): `images/responsive_small.png`
+    - Large screen (tablet/landscape): `images/responsive_large.png`
+
+  - Reflection prompts:
+    - Why is responsiveness important in mobile apps?
+    - What challenges did you face while managing layout proportions?
+    - How can you improve your layout for different screen orientations?
+
+  ---
+
+  ## Submission Guidelines
+
+  1. Create a Pull Request (PR)
+
+  - Commit message:
+
+    `feat: designed responsive layout using rows, columns, and containers`
+
+  - PR title:
+
+    `[Sprint-2] Responsive Layout Design – TeamName`
+
+  - PR description should include:
+    - Summary of your implementation
+    - Screenshots from this README (`images/responsive_small.png`, `images/responsive_large.png`)
+    - Short reflection answering the prompts above
+
+  2. Record a Short Video Demo (1–2 minutes)
+
+  - Demonstrate the app adapting across screen sizes and orientations.
+  - Mention how `Row`, `Column`, `Container`, `MediaQuery`, and `Expanded` are used.
+  - Upload to Google Drive, Loom, or YouTube (unlisted) and include the link in your PR description.
+
+  ---
+
+  ## Resources
+
+  - Flutter Layout Basics: https://flutter.dev/docs/development/ui/layout
+  - Building Responsive Apps in Flutter: https://flutter.dev/docs/development/ui/layout/responsive
+  - MediaQuery Class Reference: https://api.flutter.dev/flutter/widgets/MediaQuery-class.html
+
+  ---
+
+  ## Placeholders / Next Steps
+
+  - Add `lib/screens/responsive_layout.dart` (example provided above) if not present.
+  - Add screenshots to `S86-sovietunion/images/responsive_small.png` and `S86-sovietunion/images/responsive_large.png`.
+  - Commit and open PR following the guidelines above.
+
+  ---
+
+  ## Reflection (example answers)
+
+  - **Why is responsiveness important?** Mobile devices vary greatly in screen size and pixel density; responsive design ensures consistent usability and appearance across devices.
+  - **Challenges faced:** Managing proportions and spacing without hard-coded sizes; ensuring text scales and doesn't overflow.
+  - **Improvements:** Use `LayoutBuilder` for even finer control, add breakpoints for multiple widths, and tune typography with `MediaQuery` or `flutter_screenutil`.
+
+  ---
+
+  If you'd like, I can also create `lib/screens/responsive_layout.dart` in this repo and add placeholder screenshots. Would you like me to add the example screen file now?
