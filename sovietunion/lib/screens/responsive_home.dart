@@ -7,16 +7,13 @@ class ResponsiveHome extends StatelessWidget {
   Widget build(BuildContext context) {
     // Get screen dimensions using MediaQuery
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     Orientation orientation = MediaQuery.of(context).orientation;
-    
+
     // Determine if device is tablet
     bool isTablet = screenWidth > 600;
-    
+
     // Calculate responsive values
-    int columns = isTablet 
-        ? (orientation == Orientation.portrait ? 3 : 4) 
-        : 2;
+    int columns = isTablet ? (orientation == Orientation.portrait ? 3 : 4) : 2;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -37,11 +34,9 @@ class ResponsiveHome extends StatelessWidget {
         children: [
           // Header Info Section
           _buildHeader(screenWidth, isTablet),
-          
+
           // Main Grid Content
-          Expanded(
-            child: _buildGrid(columns, isTablet),
-          ),
+          Expanded(child: _buildGrid(columns, isTablet)),
         ],
       ),
     );
@@ -107,9 +102,7 @@ class ResponsiveHome extends StatelessWidget {
   Widget _buildCard(SharedSpace space, bool isTablet) {
     return Card(
       elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: EdgeInsets.all(isTablet ? 16 : 12),
         child: Column(
