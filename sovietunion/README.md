@@ -1,45 +1,55 @@
 # Soviet Union App
 
-This project is a Flutter application.
+This project is a Flutter application that demonstrates a simple authentication flow and navigation using named routes.
 
-## Folder Structure
+## Navigation Flow
 
-The project follows a feature-driven directory structure to promote modularity and scalability.
+The application has the following navigation flow:
 
+1.  **Login Screen**: The initial screen of the application. The user can log in with their credentials or navigate to the sign-up screen.
+2.  **Sign-Up Screen**: The user can create a new account. After a successful sign-up, the user is navigated to the dashboard.
+3.  **Dashboard Screen**: The main screen after a successful login. It displays a welcome message and has a sidebar for navigation.
+4.  **Soviet Dashboard Screen**: Another screen accessible from the sidebar.
+
+## Named Routes
+
+The application uses named routes for navigation. The routes are defined in `lib/main.dart`:
+
+```dart
+initialRoute: '/',
+routes: {
+  '/': (context) => const FirebaseInitWrapper(),
+  '/login': (context) => const LoginScreen(),
+  '/signup': (context) => const SignupScreen(),
+  '/dashboard': (context) => const DashboardScreen(),
+  '/soviet_dashboard': (context) => const Dashboard(),
+},
 ```
-lib/
-├── main.dart          # Entry point of your app
-├── screens/           # Individual UI screens for each feature
-├── widgets/           # Reusable UI components shared across the app
-├── models/            # Data models representing the app's data structures
-├── services/          # Business logic, API calls, and other services
+
+Navigation is done using `Navigator.pushReplacementNamed()`:
+
+```dart
+Navigator.of(context).pushReplacementNamed('/dashboard');
 ```
 
-### Directory Purpose
+## Sidebar Navigation
 
-- **`lib/`**: The main container for all Dart code in the application.
-- **`main.dart`**: The entry point of the application. It initializes the app and sets up the root widget.
-- **`screens/`**: Contains the primary UI screens of the application. Each screen is typically a separate file and represents a major feature or view.
-- **`widgets/`**: Holds reusable UI components that can be shared across multiple screens. This promotes code reuse and a consistent UI.
-- **`models/`**: Defines the data structures for the application. These are plain Dart classes that represent the data fetched from an API or used within the app.
-- **`services/`**: Contains the business logic of the application, such as API communication, database interactions, and other background services.
+The application has a sidebar for navigating between the `DashboardScreen` and the `SovietDashboardScreen`. The sidebar is implemented in `lib/widgets/app_drawer.dart`.
 
-### Modular App Design
+## Screenshots
 
-This folder structure supports a modular app design by separating concerns:
+_Coming soon..._
 
-- **UI (`screens/`, `widgets/`)**: The UI is kept separate from the business logic, making it easier to modify the look and feel of the app without affecting the underlying functionality.
-- **Data (`models/`)**: By defining data models in one place, we ensure a consistent data structure throughout the app.
-- **Logic (`services/`)**: Centralizing business logic makes it easier to manage and test.
+## Reflection
 
-This separation allows different developers to work on different parts of the app simultaneously with minimal conflicts.
+### What is the role of the Navigator in Flutter?
 
-### Naming Conventions
+The `Navigator` is a widget that manages a stack of `Route` objects. It is responsible for pushing and popping routes to and from the stack, which corresponds to navigating between screens.
 
-To maintain a clean and readable codebase, we follow these naming conventions:
+### Why are named routes preferred for larger apps?
 
-- **Files**: `snake_case.dart` (e.g., `home_screen.dart`, `custom_button.dart`).
-- **Classes**: `PascalCase` (e.g., `HomeScreen`, `CustomButton`).
-- **Widgets**: `PascalCase` for widget classes (e.g., `CustomButton`).
-- **Variables and Functions**: `camelCase` (e.g., `userName`, `fetchUserData()`).
-- **Constants**: `camelCase` or `UPPER_SNAKE_CASE` for top-level constants.
+Named routes are preferred for larger apps because they provide a centralized way to manage all the routes in the application. This makes it easier to refactor and maintain the code, as all the routes are defined in one place. It also helps to avoid typos and errors when navigating between screens, as you are using a string name instead of a direct reference to the widget.
+
+### How does Flutter manage the navigation stack?
+
+Flutter manages the navigation stack using the `Navigator` widget. When you push a new route onto the stack, the new screen is displayed on top of the previous one. When you pop a route from the stack, the previous screen is revealed. The `Navigator` keeps track of the order of the routes in the stack, so you can navigate back and forth between screens. You can also manipulate the stack by using methods like `pushReplacementNamed`, which replaces the current route with a new one, or `popUntil`, which pops routes until a certain condition is met.
