@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sovietunion/services/auth_service.dart';
-import 'package:sovietunion/screens/dashboard.dart';
-import 'package:sovietunion/screens/login_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,31 +9,11 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final AuthService _auth = AuthService();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  String _errorMessage = '';
 
-  void _signUp() async {
-    final email = _emailController.text.trim();
-    final password = _passwordController.text.trim();
-    if (email.isNotEmpty && password.isNotEmpty) {
-      final user = await _auth.signUp(email, password);
-      if (user != null) {
-        // ignore: use_build_context_synchronously
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const DashboardScreen()),
-        );
-      } else {
-        setState(() {
-          _errorMessage = 'Sign up failed. Please try again.';
-        });
-      }
-    } else {
-      setState(() {
-        _errorMessage = 'Please enter email and password.';
-      });
-    }
+  void _signUp() {
+    Navigator.of(context).pushReplacementNamed('/dashboard');
   }
 
   @override
@@ -61,19 +38,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(onPressed: _signUp, child: const Text('Sign Up')),
-            if (_errorMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text(
-                  _errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
+                Navigator.of(context).pushReplacementNamed('/login');
               },
               child: const Text('Already have an account? Login'),
             ),
