@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:sovietunion/widgets/info_card.dart';
+import 'package:sovietunion/widgets/custom_button.dart';
 
 class ScrollableViewsScreen extends StatelessWidget {
   const ScrollableViewsScreen({super.key});
@@ -14,6 +16,14 @@ class ScrollableViewsScreen extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.all(12.0),
               child: Text('Horizontal ListView', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: InfoCard(
+                title: 'Reusable InfoCard',
+                subtitle: 'This card is a reusable widget used in multiple screens.',
+                icon: Icons.info,
+              ),
             ),
             SizedBox(
               height: 180,
