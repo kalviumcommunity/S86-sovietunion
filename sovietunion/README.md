@@ -56,3 +56,39 @@ Navigate to it from the Dashboard using the floating action button (bottom-right
 PR: https://github.com/kalviumcommunity/S86-sovietunion/pull/11
 
 Video demo: https://drive.google.com/file/d/1yP5PWrsDOqB1FxT_gwRahE76EK0P8kJ7/view?usp=drive_link
+
+## State Management Demo
+
+I added `lib/screens/state_management_demo.dart` — a small `StatefulWidget` counter demonstrating local state management with `setState()`.
+
+Key behaviors:
+
+- Increment, decrement, and reset the counter.
+- Conditional UI: background color changes when `_counter >= 5`.
+
+Code snippet:
+
+```dart
+class StateManagementDemo extends StatefulWidget { ... }
+
+class StateManagementDemoState extends State<StateManagementDemo> {
+	int _counter = 0;
+
+	void _incrementCounter() {
+		setState(() { _counter++; });
+	}
+
+	void _decrementCounter() {
+		setState(() { if (_counter > 0) _counter--; });
+	}
+}
+```
+
+Navigate to the demo from the Dashboard via the "State Management Demo" button.
+
+Reflection prompts to include in PR description:
+
+- Difference between `StatelessWidget` and `StatefulWidget`.
+- Why `setState()` is required to update the UI.
+- How improper `setState()` use can lead to performance issues.
+

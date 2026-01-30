@@ -5,6 +5,7 @@ import 'package:sovietunion/screens/scrollable_views.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sovietunion/widgets/info_card.dart';
 import 'package:sovietunion/widgets/custom_button.dart';
+import 'package:sovietunion/screens/state_management_demo.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -52,6 +53,16 @@ class DashboardScreen extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const ScrollableViewsScreen()),
                 );
               },
+            ),
+            const SizedBox(height: 12),
+            CustomButton(
+              label: 'State Management Demo',
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const StateManagementDemo()),
+                );
+              },
+              color: Colors.teal,
             ),
           ],
         ),
