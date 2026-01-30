@@ -9,11 +9,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   void _login() {
-    Navigator.of(context).pushReplacementNamed('/dashboard');
+    if (_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Processing Data')));
+      Navigator.of(context).pushReplacementNamed('/dashboard');
+    }
   }
 
   @override
@@ -22,29 +28,50 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(onPressed: _login, child: const Text('Login')),
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed('/signup');
-              },
-              child: const Text('Don\'t have an account? Sign Up'),
-            ),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    return 'Please enter a valid email';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters long';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(onPressed: _login, child: const Text('Login')),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacementNamed('/signup');
+                },
+                child: const Text('Don\'t have an account? Sign Up'),
+              ),
+            ],
+          ),
         ),
       ),
     );
