@@ -43,3 +43,16 @@ To maintain a clean and readable codebase, we follow these naming conventions:
 - **Widgets**: `PascalCase` for widget classes (e.g., `CustomButton`).
 - **Variables and Functions**: `camelCase` (e.g., `userName`, `fetchUserData()`).
 - **Constants**: `camelCase` or `UPPER_SNAKE_CASE` for top-level constants.
+
+## Scrollable Views Screen
+
+A new screen `lib/screens/scrollable_views.dart` was added to demonstrate scrollable layouts:
+
+- A horizontal `ListView.builder` showcasing simple cards.
+- A `GridView.builder` embedded in a `SingleChildScrollView` for a vertical tile layout.
+
+Navigate to it from the Dashboard using the floating action button (bottom-right).
+
+PR: https://github.com/kalviumcommunity/S86-sovietunion/pull/11
+
+Video demo: https://drive.google.com/file/d/1yP5PWrsDOqB1FxT_gwRahE76EK0P8kJ7/view?usp=drive_link

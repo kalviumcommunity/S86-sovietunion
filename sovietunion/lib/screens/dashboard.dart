@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sovietunion/services/auth_service.dart';
 import 'package:sovietunion/screens/login_screen.dart';
+import 'package:sovietunion/screens/scrollable_views.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -26,6 +27,15 @@ class DashboardScreen extends StatelessWidget {
         ],
       ),
       body: Center(child: Text('Welcome, ${user?.email ?? 'Guest'}!')),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Scrollable Views',
+        child: const Icon(Icons.view_stream),
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const ScrollableViewsScreen()),
+          );
+        },
+      ),
     );
   }
 }
