@@ -440,4 +440,48 @@ feat: implemented scrollable layouts using ListView and GridView
 
 ---
 
-Previous sections about responsive design, widgets, and debugging remain useful and can be referenced as needed.
+  If you'd like, I can also create `lib/screens/responsive_layout.dart` in this repo and add placeholder screenshots. Would you like me to add the example screen file now?
+
+# 📱 Scrollable Views in Flutter  
+### Sprint-2 Task — ListView & GridView Implementation
+
+This project demonstrates how to build **scrollable layouts in Flutter** using two core widgets:
+
+- **ListView** → for dynamic vertical or horizontal lists  
+- **GridView** → for structured, multi-column layouts  
+
+The goal is to design smooth, interactive, and performance-optimized UI screens such as **product catalogs, chat lists, dashboards, and photo galleries**.
+
+---
+
+## 🚀 Features
+
+✅ Vertical & Horizontal scrolling  
+✅ Dynamic list rendering  
+✅ Grid-based layout design  
+✅ Performance-optimized scrolling  
+✅ Clean UI structure  
+✅ Responsive layout handling  
+
+---
+
+## 🧠 Concepts Covered
+
+- Scrollable widgets in Flutter  
+- `ListView`  
+- `ListView.builder()`  
+- `GridView.count()`  
+- `GridView.builder()`  
+- `SingleChildScrollView`  
+- `SliverGridDelegateWithFixedCrossAxisCount`  
+- Performance optimization  
+- Nested scrolling handling  
+
+---
+
+## 📂 File Structure
+
+```bash
+lib/
+ └── screens/
+     └── scrollable_views.dart

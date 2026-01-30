@@ -52,4 +52,21 @@ Named routes are preferred for larger apps because they provide a centralized wa
 
 ### How does Flutter manage the navigation stack?
 
-Flutter manages the navigation stack using the `Navigator` widget. When you push a new route onto the stack, the new screen is displayed on top of the previous one. When you pop a route from the stack, the previous screen is revealed. The `Navigator` keeps track of the order of the routes in the stack, so you can navigate back and forth between screens. You can also manipulate the stack by using methods like `pushReplacementNamed`, which replaces the current route with a new one, or `popUntil`, which pops routes until a certain condition is met.
+- **Files**: `snake_case.dart` (e.g., `home_screen.dart`, `custom_button.dart`).
+- **Classes**: `PascalCase` (e.g., `HomeScreen`, `CustomButton`).
+- **Widgets**: `PascalCase` for widget classes (e.g., `CustomButton`).
+- **Variables and Functions**: `camelCase` (e.g., `userName`, `fetchUserData()`).
+- **Constants**: `camelCase` or `UPPER_SNAKE_CASE` for top-level constants.
+
+## Scrollable Views Screen
+
+A new screen `lib/screens/scrollable_views.dart` was added to demonstrate scrollable layouts:
+
+- A horizontal `ListView.builder` showcasing simple cards.
+- A `GridView.builder` embedded in a `SingleChildScrollView` for a vertical tile layout.
+
+Navigate to it from the Dashboard using the floating action button (bottom-right).
+
+PR: https://github.com/kalviumcommunity/S86-sovietunion/pull/11
+
+Video demo: https://drive.google.com/file/d/1yP5PWrsDOqB1FxT_gwRahE76EK0P8kJ7/view?usp=drive_link
