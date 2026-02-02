@@ -148,3 +148,234 @@ Feedback widgets like `SnackBar` can significantly improve the user experience b
 - **Displaying Non-critical Errors:** Showing error messages that don't require immediate user interaction, such as a network error.
 - **Offering Contextual Actions:** A `SnackBar` can include an action button, like an "Undo" option after deleting an item, giving users more control.
 - **Being Unobtrusive:** `SnackBar`s appear at the bottom of the screen and disappear after a short time, providing information without interrupting the user's workflow.
+
+# Animations in Flutter
+
+## Goal: Use animation to improve user experience, not to distract.
+
+This document outlines how to use animations in Flutter to create a better user experience.
+
+## 2. Explore Implicit Animations
+
+Implicit animations automatically transition between property values without needing an animation controller. Flutter’s built-in widgets like `AnimatedContainer`, `AnimatedOpacity`, and `AnimatedAlign` make this easy.
+
+### Example 1: AnimatedContainer
+
+```dart
+import 'package:flutter/material.dart';
+
+class AnimatedBoxDemo extends StatefulWidget {
+  @override
+  _AnimatedBoxDemoState createState() => _AnimatedBoxDemoState();
+}
+
+class _AnimatedBoxDemoState extends State<AnimatedBoxDemo> {
+  bool _toggled = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('AnimatedContainer Demo')),
+      body: Center(
+        child: AnimatedContainer(
+          width: _toggled ? 200 : 100,
+          height: _toggled ? 100 : 200,
+          color: _toggled ? Colors.teal : Colors.orange,
+          duration: Duration(seconds: 1),
+          curve: Curves.easeInOut,
+          child: Center(
+            child: Text(
+              'Tap Me!',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            _toggled = !_toggled;
+          });
+        },
+        child: Icon(Icons.play_arrow),
+      ),
+    );
+  }
+}
+```
+
+**Explanation:** When you press the FAB, the container smoothly transitions between sizes and colors.
+
+### Implementation in this App
+
+In `lib/screens/login_screen.dart`, the login button uses `AnimatedContainer` to change its width and color upon being tapped.
+
+```dart
+GestureDetector(
+  onTap: () {
+    setState(() {
+      _toggled = !_toggled;
+    });
+    _login();
+  },
+  child: AnimatedContainer(
+    width: _toggled ? 200 : 150,
+    height: 50,
+    duration: const Duration(seconds: 1),
+    curve: Curves.easeInOut,
+    decoration: BoxDecoration(
+      color: _toggled ? Colors.teal : Colors.orange,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: const Center(
+      child: Text(
+        'Login',
+        style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+    ),
+  ),
+),
+```
+
+### Example 2: AnimatedOpacity
+
+```dart
+AnimatedOpacity(
+  opacity: _toggled ? 1.0 : 0.3,
+  duration: Duration(seconds: 1),
+  child: Image.asset('assets/images/logo.png', width: 120),
+);
+```
+
+This widget makes the image fade in or out smoothly when `_toggled` changes.
+
+## 3. Explore Explicit Animations
+
+Explicit animations give developers full control using an `AnimationController`. They’re ideal for creating loops, custom timing, or layered effects.
+
+### Example: Rotation Animation
+
+```dart
+import 'package:flutter/material.dart';
+
+class RotateLogoDemo extends StatefulWidget {
+  @override
+  _RotateLogoDemoState createState() => _RotateLogoDemoState();
+}
+
+class _RotateLogoDemoState extends State<RotateLogoDemo>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Rotation Animation Demo')),
+      body: Center(
+        child: RotationTransition(
+          turns: _controller,
+          child: Image.asset('assets/images/logo.png', width: 100),
+        ),
+      ),
+    );
+  }
+}
+```
+
+This continuously rotates the logo image using Flutter’s `RotationTransition` and `AnimationController`.
+
+### Implementation in this App
+
+In `lib/screens/login_screen.dart`, a `RotationTransition` is used to rotate the app logo.
+
+```dart
+RotationTransition(
+  turns: _controller,
+  child: Image.asset('assets/images/logo.png', width: 100),
+),
+```
+
+## 4. Adding Page Transitions
+
+Instead of abrupt screen changes, you can use animated transitions for navigation.
+
+### Example: Slide Transition Between Screens
+
+```dart
+Navigator.push(
+  context,
+  PageRouteBuilder(
+    transitionDuration: Duration(milliseconds: 700),
+    pageBuilder: (context, animation, secondaryAnimation) => NextPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(1.0, 0.0),
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeInOut,
+        )),
+        child: child,
+      );
+    },
+  ),
+);
+```
+
+**Result:** The new screen slides in smoothly from the right. You can try other transitions like fade, scale, or rotation for creative effects.
+
+### Implementation in this App
+
+In `lib/screens/login_screen.dart`, a `SlideTransition` is used when navigating to the `SignupScreen`.
+
+```dart
+TextButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 700),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const SignupScreen(),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOut,
+            )),
+            child: child,
+          );
+        },
+      ),
+    );
+  },
+  child: const Text('Don\'t have an account? Sign Up'),
+),
+```
+
+## 5. Best Practices for Animations
+
+- **Keep it meaningful** — animations should support user intent.
+- **Stay fast and subtle** — aim for durations between 300–800ms.
+- **Test on real devices** to avoid lag on low-end phones.
+- **Use curves** like `Curves.easeInOut` for natural motion.

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sovietunion/screens/signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -8,10 +9,28 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _toggled = false;
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _login() {
     if (_formKey.currentState!.validate()) {
@@ -33,6 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              RotationTransition(
+                turns: _controller,
+                child: Image.asset('assets/images/logo.png', width: 100),
+              ),
+              const SizedBox(height: 24),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
@@ -63,10 +87,56 @@ class _LoginScreenState extends State<LoginScreen> {
                 },
               ),
               const SizedBox(height: 24),
-              ElevatedButton(onPressed: _login, child: const Text('Login')),
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _toggled = !_toggled;
+                  });
+                  _login();
+                },
+                child: AnimatedContainer(
+                  width: _toggled ? 200 : 150,
+                  height: 50,
+                  duration: const Duration(seconds: 1),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    color: _toggled ? Colors.teal : Colors.orange,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                ),
+              ),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed('/signup');
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: const Duration(milliseconds: 700),
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          const SignupScreen(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                            return SlideTransition(
+                              position:
+                                  Tween<Offset>(
+                                    begin: const Offset(1.0, 0.0),
+                                    end: Offset.zero,
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOut,
+                                    ),
+                                  ),
+                              child: child,
+                            );
+                          },
+                    ),
+                  );
                 },
                 child: const Text('Don\'t have an account? Sign Up'),
               ),
