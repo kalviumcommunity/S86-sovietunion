@@ -81,3 +81,44 @@ Reflection (short):
 - **Team usage:** Use `LayoutBuilder` to change widget trees for breakpoints and `MediaQuery` for proportional sizing (padding, font scaling).
 
 You can capture screenshots from emulators (phone and tablet), add them to `screenshots/`, and reference them in the PR description.
+
+## Asset Management (images & icons)
+
+This project demonstrates how to add and use local assets (images and icons).
+
+1. Folder structure (create under project root):
+
+```
+assets/
+	images/
+		logo.png
+		banner.jpg
+	icons/
+		star.png
+		profile.png
+```
+
+2. Registration: `pubspec.yaml` now includes:
+
+```yaml
+flutter:
+	assets:
+		- assets/images/
+		- assets/icons/
+```
+
+3. Demo screen: `lib/screens/asset_demo.dart` shows usage of `Image.asset` and built-in `Icon` widgets.
+
+Example snippet:
+
+```dart
+Image.asset('assets/images/logo.png', width: 140, height: 140, fit: BoxFit.cover)
+Icon(Icons.flutter_dash, color: Colors.blue)
+```
+
+4. Notes & common issues:
+- Ensure correct indentation in `pubspec.yaml` (2 spaces).
+- Run `flutter pub get` after adding assets.
+- If images don't appear, confirm file paths and that assets are present.
+
+Add screenshots of the demo and your `pubspec.yaml` snippet to the `screenshots/` folder for the PR.
