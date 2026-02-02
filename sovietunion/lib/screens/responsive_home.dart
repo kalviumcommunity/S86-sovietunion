@@ -5,18 +5,10 @@ class ResponsiveHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen dimensions using MediaQuery
+    // Use LayoutBuilder for constraint-based layouts, and MediaQuery for
+    // raw device metrics (e.g., for font scaling or percent-based widths).
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    Orientation orientation = MediaQuery.of(context).orientation;
-    
-    // Determine if device is tablet
-    bool isTablet = screenWidth > 600;
-    
-    // Calculate responsive values
-    int columns = isTablet 
-        ? (orientation == Orientation.portrait ? 3 : 4) 
-        : 2;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -28,21 +20,35 @@ class ResponsiveHome extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'Community Dashboard',
-          style: TextStyle(fontSize: isTablet ? 22 : 18),
-        ),
+        title: LayoutBuilder(builder: (context, constraints) {
+          final isTablet = constraints.maxWidth >= 600;
+          return Text(
+            'Community Dashboard',
+            style: TextStyle(fontSize: isTablet ? 22 : 18),
+          );
+        }),
       ),
-      body: Column(
-        children: [
-          // Header Info Section
-          _buildHeader(screenWidth, isTablet),
-          
-          // Main Grid Content
-          Expanded(
-            child: _buildGrid(columns, isTablet),
-          ),
-        ],
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isTablet = constraints.maxWidth >= 600;
+          final orientation = MediaQuery.of(context).orientation;
+
+          final int columns = isTablet
+              ? (orientation == Orientation.portrait ? 3 : 4)
+              : 2;
+
+          return Column(
+            children: [
+              // Header Info Section
+              _buildHeader(screenWidth, isTablet),
+
+              // Main Grid Content
+              Expanded(
+                child: _buildGrid(columns, isTablet),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

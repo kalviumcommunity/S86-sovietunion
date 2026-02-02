@@ -43,3 +43,41 @@ To maintain a clean and readable codebase, we follow these naming conventions:
 - **Widgets**: `PascalCase` for widget classes (e.g., `CustomButton`).
 - **Variables and Functions**: `camelCase` (e.g., `userName`, `fetchUserData()`).
 - **Constants**: `camelCase` or `UPPER_SNAKE_CASE` for top-level constants.
+
+## Responsive Design (MediaQuery + LayoutBuilder)
+
+This project includes a responsive screen implementation using `MediaQuery`
+and `LayoutBuilder` to adapt UI across phone and tablet sizes. The main
+example is `lib/screens/responsive_home.dart` which switches layouts based
+on `constraints.maxWidth` (from `LayoutBuilder`) while using
+`MediaQuery` for device metrics and orientation.
+
+Key snippet:
+
+```dart
+// inside build()
+return LayoutBuilder(
+	builder: (context, constraints) {
+		final isTablet = constraints.maxWidth >= 600;
+		final orientation = MediaQuery.of(context).orientation;
+
+		final int columns = isTablet
+			? (orientation == Orientation.portrait ? 3 : 4)
+			: 2;
+
+		// build header and grid using computed values
+	},
+);
+```
+
+What to add to README for submission:
+- Screenshots: `screenshots/phone.png` and `screenshots/tablet.png` (place them here)
+- Short reflection on why responsiveness matters and how the implementation uses `MediaQuery` vs `LayoutBuilder`.
+
+Reflection (short):
+
+- **Why responsive matters:** Ensures layouts adapt to various screen sizes, improving usability and preventing overflow issues.
+- **LayoutBuilder vs MediaQuery:** `LayoutBuilder` uses parent constraints to decide layout structure; `MediaQuery` provides raw device metrics for sizing and scaling.
+- **Team usage:** Use `LayoutBuilder` to change widget trees for breakpoints and `MediaQuery` for proportional sizing (padding, font scaling).
+
+You can capture screenshots from emulators (phone and tablet), add them to `screenshots/`, and reference them in the PR description.
