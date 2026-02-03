@@ -114,169 +114,159 @@ Using `ListView.builder` for long lists:
 ```dart
 ListView.builder(
   itemCount: 10,
-  itemBuilder: (context, index) {
-    return ListTile(
-      leading: CircleAvatar(child: Text('${index + 1}')),
-      title: Text('Item $index'),
-      subtitle: Text('This is item number $index'),
-    );
-  },
-);
-```
+  # Soviet Union App
 
-### 2. GridView — Grids for Images or Cards
-GridView displays scrollable grid layouts. Use `GridView.builder` for large or dynamic grids.
+  This Flutter project includes Sprint-2 lessons and a Firebase Auth exercise. The README below focuses on the authentication flow: Sign Up, Login, and Logout using Firebase Authentication and real-time session handling.
 
-Fixed count example:
+  ## Firebase Auth — Quick Overview
 
-```dart
-GridView.count(
-  crossAxisCount: 2,
-  crossAxisSpacing: 10,
-  mainAxisSpacing: 10,
-  children: [
-    Container(color: Colors.red, height: 100),
-    Container(color: Colors.green, height: 100),
-    Container(color: Colors.blue, height: 100),
-    Container(color: Colors.yellow, height: 100),
-  ],
-);
-```
+  Flow:
+  - Sign Up: creates account in Firebase
+  - Login: returns an authenticated session
+  - App listens to `authStateChanges()` and shows `HomeScreen` when a user is present
+  - Logout: clears session and returns to `AuthScreen`
 
-Using `GridView.builder`:
+  ## Add dependencies (pubspec.yaml)
 
-```dart
-GridView.builder(
-  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 2,
-    crossAxisSpacing: 8,
-    mainAxisSpacing: 8,
-  ),
-  itemCount: 8,
-  itemBuilder: (context, index) {
-    return Container(
-      color: Colors.primaries[index % Colors.primaries.length],
-      child: Center(child: Text('Item $index')),
-    );
-  },
-);
-```
+  dependencies:
+    firebase_core: ^3.0.0
+    firebase_auth: ^5.0.0
 
-### 3. Combined Example (`scrollable_views.dart`)
-Place this example in `lib/screens/scrollable_views.dart` to show both a horizontal `ListView` and a vertical `GridView` on one screen.
+  Install packages:
 
-```dart
-import 'package:flutter/material.dart';
+  ```bash
+  flutter pub get
+  ```
 
-class ScrollableViews extends StatelessWidget {
-  const ScrollableViews({super.key});
+  ## Initialize Firebase and use `authStateChanges()` (`lib/main.dart`)
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Scrollable Views')),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: const Text('ListView Example', style: TextStyle(fontSize: 18)),
-            ),
-            SizedBox(
-              height: 200,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Container(
-                    width: 150,
-                    margin: const EdgeInsets.all(8),
-                    color: Colors.teal[100 * (index + 2)],
-                    child: Center(child: Text('Card $index')),
-                  );
-                },
-              ),
-            ),
-            const Divider(thickness: 2),
-            Container(
-              padding: const EdgeInsets.all(8),
-              child: const Text('GridView Example', style: TextStyle(fontSize: 18)),
-            ),
-            SizedBox(
-              height: 400,
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  return Container(
-                    color: Colors.primaries[index % Colors.primaries.length],
-                    child: Center(
-                      child: Text(
-                        'Tile $index',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+  Use the `StreamBuilder<User?>` pattern so navigation reacts to auth state:
+
+  ```dart
+  import 'package:flutter/material.dart';
+  import 'package:firebase_core/firebase_core.dart';
+  import 'package:firebase_auth/firebase_auth.dart';
+  import 'firebase_options.dart';
+  import 'screens/login_screen.dart';
+  import 'screens/home_screen.dart';
+
+  void main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    runApp(MyApp());
   }
-}
-```
 
-### 4. Testing & Screenshots
-- Run the app on different devices/emulators and verify:
-  - `ListView` scrolls smoothly (horizontal or vertical as used).
-  - `GridView` items are evenly spaced and wrap or scroll as expected.
-- Capture screenshots showing the horizontal list and the grid view.
+  class MyApp extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      return MaterialApp(
+        title: 'Auth Flow Demo',
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (ctx, snapshot) {
+            if (snapshot.hasData) return HomeScreen();
+            return LoginScreen();
+          },
+        ),
+      );
+    }
+  }
+  ```
 
-Add screenshots to this repo (e.g., `assets/screenshots/`) and reference them below.
+  ## Auth service example (`lib/services/auth_service.dart`)
 
-### 5. Reflection
-- **How they improve efficiency:** `ListView` and `GridView` provide lazy layout engines (especially with builder constructors) that render only visible items, reducing memory and CPU usage.
-- **Why builders are recommended:** `ListView.builder` and `GridView.builder` create widgets on demand, improving performance for large data sets by avoiding building the entire list/grid at once.
-- **Common pitfalls:** Nesting multiple scrollable widgets without constraints, not using `shrinkWrap`/`physics` correctly, and building complex widgets per item without optimization (e.g., expensive rebuilds) can harm performance.
+  ```dart
+  import 'package:firebase_auth/firebase_auth.dart';
 
-## README Snippets / Screenshots
-- Example ListView and GridView code are shown above.
-- Add screenshots here once captured:
+  class AuthService {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
 
-![ListView Example](assets/screenshots/listview_example.png)
-![GridView Example](assets/screenshots/gridview_example.png)
+    Future<User?> signUp(String email, String password) async {
+      final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      return cred.user;
+    }
 
-## Submission Guidelines
+    Future<User?> signIn(String email, String password) async {
+      final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return cred.user;
+    }
 
-- Commit message suggestion:
+    Future<void> signOut() async => _auth.signOut();
+  }
+  ```
 
-```
-feat: implemented scrollable layouts using ListView and GridView
-```
+  ## AuthScreen (Login + Sign Up)
 
-- PR title suggestion:
+  - Collect email and password inputs.
+  - Toggle between Login and Sign Up modes.
+  - Call `AuthService.signUp()` or `AuthService.signIn()`.
+  - Handle `FirebaseAuthException` and show `SnackBar` messages.
 
-```
-[Sprint-2] Scrollable Views with ListView & GridView – TeamName
-```
+  Example submit handling snippet:
 
-- PR description should include:
-  - A short summary of the implementation.
-  - Screenshots from this README.
-  - A short reflection on what you learned.
-  - A link to the demo video (1–2 minutes) hosted on Google Drive, Loom, or YouTube (unlisted). Ensure the link is set to "Anyone with the link" and has Edit access for Google Drive.
+  ```dart
+  try {
+    await AuthService().signIn(email, password);
+  } on FirebaseAuthException catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Authentication error')));
+  }
+  ```
 
-## Notes
-- This README update focuses on documentation. The example `scrollable_views.dart` is included as a reference snippet; create the file under `lib/screens/` if you want to run the demo.
+  Note: On success you don't need to navigate manually — the `StreamBuilder` in `main.dart` will detect the change and show `HomeScreen`.
 
----
+  ## HomeScreen (`lib/screens/home_screen.dart`)
 
-Previous sections about responsive design, widgets, and debugging remain useful and can be referenced as needed.
+  ```dart
+  import 'package:flutter/material.dart';
+  import 'package:firebase_auth/firebase_auth.dart';
+
+  class HomeScreen extends StatelessWidget {
+    @override
+    Widget build(BuildContext context) {
+      final user = FirebaseAuth.instance.currentUser;
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Welcome, ${user?.email}'),
+          actions: [IconButton(icon: Icon(Icons.logout), onPressed: () => FirebaseAuth.instance.signOut())],
+        ),
+        body: Center(child: Text('You are logged in!', style: TextStyle(fontSize: 22))),
+      );
+    }
+  }
+  ```
+
+  ## Testing checklist
+
+  1. Start the app on emulator/device.
+  2. Sign up a new user → verify user appears in Firebase Console (Authentication → Users).
+  3. App auto-switches to `HomeScreen` after successful sign-up/login.
+  4. Tap logout → app returns to `LoginScreen`.
+  5. Test error cases: invalid email, wrong password, short password, existing account.
+
+  ## Screenshots
+
+  - Add screenshots in `assets/screenshots/` and link them here:
+    - `auth_screen.png`
+    - `home_screen.png`
+    - `firebase_users.png`
+
+  ## Reflection (write your answers here)
+
+  - Hardest part: e.g., handling different `FirebaseAuthException` codes and ensuring smooth UX.
+  - How `StreamBuilder` helps: it centralizes session handling and auto-updates UI when auth state changes.
+  - Why logout matters: ensures tokens are cleared and protects user sessions on shared devices.
+
+  ## Commit & PR
+
+  - Commit message example: `feat: implemented signup, login, and logout flows using Firebase Auth`
+  - PR title example: `[Sprint-2] Firebase Auth – Signup, Login & Logout Flows – TeamName`
+  - PR description: include summary, screenshots (Auth + Home), Firebase Users screenshot, and reflection.
+
+  ---
+
+  Next steps I can take for you:
+  - Wire `lib/screens/login_screen.dart` and `lib/screens/signup_screen.dart` to call `AuthService` and display SnackBars.
+  - Update `lib/main.dart` in your app to the `StreamBuilder` pattern above.
+  - Add or update `home_screen.dart` if you'd like a dedicated file.
+
+  Tell me which of these you want me to implement.
