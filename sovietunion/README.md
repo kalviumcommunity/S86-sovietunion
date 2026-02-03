@@ -92,3 +92,223 @@ Reflection prompts to include in PR description:
 - Why `setState()` is required to update the UI.
 - How improper `setState()` use can lead to performance issues.
 
+## Firebase SDK Integration (FlutterFire CLI)
+
+This project includes Firebase SDKs configured using the FlutterFire CLI. The CLI automates generating platform-specific configuration and wiring it into your Flutter app.
+
+**What is FlutterFire CLI?**
+
+- **Description:** A command-line tool that generates `firebase_options.dart` and configures Android, iOS, macOS and Web build files to connect your app to a Firebase project.
+- **Benefits:** prevents manual mistakes, supports multi-platform in one command, keeps SDK setup consistent.
+
+**Quick Install & Setup**
+
+- Prerequisites: `flutter` and `dart` on PATH, and `node` + `npm` for Firebase tools.
+- Install Firebase CLI (if needed):
+
+```bash
+npm install -g firebase-tools
+```
+
+- Install FlutterFire CLI:
+
+```bash
+dart pub global activate flutterfire_cli
+```
+
+- Verify:
+
+```bash
+flutterfire --version
+```
+
+**Login & Configure (run inside project root)**
+
+```bash
+firebase login
+flutterfire configure
+```
+
+The `flutterfire configure` command will detect your Firebase projects, allow you to select the correct one, and generate `lib/firebase_options.dart` with platform credentials.
+
+**Dependencies**
+
+This project already includes Firebase dependencies in `pubspec.yaml`:
+
+- `firebase_core` (required)
+- `firebase_auth`
+- `cloud_firestore`
+
+Run:
+
+```bash
+flutter pub get
+```
+
+**Initialize Firebase**
+
+Use the generated `lib/firebase_options.dart` when initializing Firebase. Example `main.dart` initialization used in this project:
+
+```dart
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'firebase_options.dart';
+
+void main() async {
+	WidgetsFlutterBinding.ensureInitialized();
+	await Firebase.initializeApp(
+		options: DefaultFirebaseOptions.currentPlatform,
+	);
+	runApp(const MyApp());
+}
+```
+
+After the app starts you should see the app run normally and Firebase logs indicating initialization.
+
+**Verify Integration**
+
+- Run the app:
+
+```bash
+flutter run
+```
+
+- Confirm the UI loads and the console contains messages like `Firebase initialized with DefaultFirebaseOptions`.
+- Check Firebase Console → Project Settings → Your Apps — the app should appear as a registered instance.
+
+**Adding Other Firebase SDKs**
+
+- Example dependencies you can add to `pubspec.yaml`:
+
+```yaml
+cloud_firestore: ^5.0.0
+firebase_auth: ^5.0.0
+firebase_analytics: ^11.0.0
+```
+
+Then run `flutter pub get`. New SDKs will use credentials from `firebase_options.dart`.
+
+**Common Issues & Fixes**
+
+- `flutterfire` not recognized — add `~/.pub-cache/bin` to your PATH.
+- Firebase not initialized — ensure you `await Firebase.initializeApp(...)` before `runApp()`.
+- Android build fails — ensure Google Services plugin is applied (`com.google.gms.google-services`) and `google-services.json` exists for Android.
+- Project mismatch — re-run `flutterfire configure` and select the correct Firebase project.
+
+**Submission / PR Guidelines**
+
+- Commit message: `feat: integrated Firebase SDKs using FlutterFire CLI`
+- PR title: `[Sprint-2] Firebase SDK Integration with FlutterFire CLI – TeamName`
+- PR description should include:
+	- Steps performed (install, login, configure, initialize)
+	- Terminal screenshot or log showing `flutterfire configure` success
+	- Link to a short demo video (1–2 minutes) showing terminal commands, `firebase_options.dart`, and the running app
+	- Reflection answers: how the CLI simplified setup, any errors faced and fixes, and why CLI is preferred over manual config
+
+**Recording Tip**
+
+Record a short screen capture showing `flutterfire configure` and `flutter run`. Upload to Drive, Loom, or YouTube (unlisted) and include the link in the PR.
+
+---
+
+If you want, I can:
+
+- Add a short screenshot placeholder and sample PR body to this README.
+- Create a branch and commit these README + `main.dart` changes and provide the exact git commands to create the PR.
+
+## Firebase Authentication (Email & Password)
+
+This project includes an Email & Password authentication flow using Firebase Authentication. The implementation uses `firebase_auth` via an `AuthService` at `lib/services/auth_service.dart` and UI screens at `lib/screens/login_screen.dart` and `lib/screens/signup_screen.dart`.
+
+1. Enable Authentication in Firebase Console
+
+- Go to Firebase Console → Authentication → Sign-in method.
+- Enable **Email/Password** and save.
+
+2. Dependencies
+
+This repo already includes Firebase packages in `pubspec.yaml` (adjust versions as needed):
+
+- `firebase_core`
+- `firebase_auth`
+- `cloud_firestore` (optional)
+
+Run:
+
+```bash
+flutter pub get
+```
+
+3. Initialize Firebase
+
+Ensure Firebase is initialized before using auth APIs. `lib/main.dart` already initializes Firebase using the generated `firebase_options.dart`:
+
+```dart
+void main() async {
+	WidgetsFlutterBinding.ensureInitialized();
+	await Firebase.initializeApp(
+		options: DefaultFirebaseOptions.currentPlatform,
+	);
+	runApp(const MyApp());
+}
+```
+
+4. Auth Screens and Service
+
+- `lib/services/auth_service.dart` — wrapper around `FirebaseAuth` with `signUp`, `signIn`, and `signOut` methods.
+- `lib/screens/login_screen.dart` — login form that calls `AuthService().signIn(...)` and routes to `DashboardScreen` on success.
+- `lib/screens/signup_screen.dart` — signup form that calls `AuthService().signUp(...)` and routes to `DashboardScreen` on success.
+
+Example auth service (already present):
+
+```dart
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
+Future<User?> signUp(String email, String password) async {
+	final credential = await _auth.createUserWithEmailAndPassword(
+		email: email,
+		password: password,
+	);
+	return credential.user;
+}
+```
+
+5. Verify Authentication
+
+- Sign up via the app; then open Firebase Console → Authentication → Users to see the new user.
+- The `DashboardScreen` displays the current user email via `FirebaseAuth.instance.currentUser` and provides a logout button that calls `AuthService().signOut()`.
+
+6. Auth State Listener
+
+You can observe auth state globally using:
+
+```dart
+FirebaseAuth.instance.authStateChanges().listen((User? user) {
+	if (user == null) {
+		print('User is signed out');
+	} else {
+		print('User is signed in: \\${user.email}');
+	}
+});
+```
+
+7. Common Issues & Fixes
+
+- `ERROR_INVALID_EMAIL` — ensure a valid email format.
+- Password must be at least 6 characters — enforce client-side validation.
+- Firebase not initialized — ensure `await Firebase.initializeApp()` before using `FirebaseAuth`.
+- App crashes on sign-in — verify package versions and run `flutter pub get`.
+
+8. README / PR Guidelines
+
+- Commit message: `feat: implemented Firebase Auth (email & password)`
+- PR title: `[Sprint-2] Firebase Authentication (Email & Password) – TeamName`
+- PR description checklist:
+	- Steps performed (enable in console, install deps, initialize, implement auth screens)
+	- Screenshot of Firebase Console → Authentication → Users showing the registered email(s)
+	- Short reflection on implementation and any errors/fixes
+	- Link to 1–2 minute demo video showing signup/login and Firebase Console
+
+If you'd like, I can prepare the PR body text and add a placeholder screenshot file to the repo.
+
+
