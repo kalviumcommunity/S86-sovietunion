@@ -141,3 +141,176 @@ Icon(Icons.flutter_dash, color: Colors.blue)
 You can capture screenshots from emulators (phone and tablet), add them to `screenshots/`, and reference them in the PR description.
 
 Add screenshots of the demo and your `pubspec.yaml` snippet to the `screenshots/` folder for the PR.
+
+## 2. Firestore Schema Design
+
+### Data Requirements List
+
+Based on the problem statement, the core entities the app will manage are:
+
+- **Users:** Residents of the housing community who will use the app.
+- **Communities:** The housing societies or complexes.
+- **SharedSpaces:** The common facilities available for booking (e.g., gym, pool, community hall).
+- **Bookings:** Reservations made by users for a specific shared space and time slot.
+- **Notifications:** Alerts sent to users regarding their bookings or space availability.
+
+### Firestore Schema
+
+Here is the proposed Firestore database structure.
+
+#### Collections
+
+- `communities`
+- `users`
+- `sharedSpaces`
+- `bookings`
+
+#### Schema Diagram (Mermaid.js)
+
+```mermaid
+graph TD
+    subgraph Firestore
+        C(communities) -->|has many| U(users)
+        C -->|has many| S(sharedSpaces)
+        U -->|makes many| B(bookings)
+        S -->|has many| B
+    end
+
+    subgraph Collections
+        C_Doc["communities/{communityId}"]
+        U_Doc["users/{userId}"]
+        S_Doc["sharedSpaces/{spaceId}"]
+        B_Doc["bookings/{bookingId}"]
+    end
+
+    C_Doc -- contains --> C_Fields
+    subgraph C_Fields [community Document]
+        C_name(name: string)
+        C_address(address: string)
+        C_createdAt(createdAt: timestamp)
+    end
+
+    U_Doc -- contains --> U_Fields
+    subgraph U_Fields [user Document]
+        U_name(name: string)
+        U_email(email: string)
+        U_communityId(communityId: string)
+        U_createdAt(createdAt: timestamp)
+    end
+
+    S_Doc -- contains --> S_Fields
+    subgraph S_Fields [sharedSpace Document]
+        S_name(name: string)
+        S_communityId(communityId: string)
+        S_capacity(capacity: number)
+        S_status(status: string 'available'/'occupied')
+        S_operatingHours(operatingHours: map)
+    end
+
+    B_Doc -- contains --> B_Fields
+    subgraph B_Fields [booking Document]
+        B_userId(userId: string)
+        B_spaceId(spaceId: string)
+        B_startTime(startTime: timestamp)
+        B_endTime(endTime: timestamp)
+        B_status(status: string 'confirmed'/'cancelled')
+        B_createdAt(createdAt: timestamp)
+    end
+```
+
+### Detailed Structure
+
+#### `communities`
+
+This collection stores information about each housing community.
+
+- **`communities/{communityId}`**
+  - `name`: `string` (e.g., "Grandview Apartments")
+  - `address`: `string` (e.g., "123 Lakeview Drive, Metropolis")
+  - `createdAt`: `timestamp`
+
+#### `users`
+
+This collection holds data for each resident.
+
+- **`users/{userId}`** (Document ID from Firebase Authentication)
+  - `name`: `string` (e.g., "Jane Doe")
+  - `email`: `string` (e.g., "jane.doe@email.com")
+  - `communityId`: `string` (Reference to `communities/{communityId}`)
+  - `createdAt`: `timestamp`
+
+#### `sharedSpaces`
+
+This collection contains details for all shared spaces across all communities.
+
+- **`sharedSpaces/{spaceId}`**
+  - `name`: `string` (e.g., "Gym")
+  - `communityId`: `string` (Reference to `communities/{communityId}`)
+  - `capacity`: `number` (e.g., 20)
+  - `status`: `string` (e.g., "available", "occupied", "maintenance")
+  - `operatingHours`: `map` (e.g., `{ "open": "06:00", "close": "22:00" }`)
+  - `rules`: `array` of `string` (e.g., ["No food allowed", "Clean equipment after use"])
+
+#### `bookings`
+
+This collection tracks all reservations made by users.
+
+- **`bookings/{bookingId}`**
+  - `userId`: `string` (Reference to `users/{userId}`)
+  - `spaceId`: `string` (Reference to `sharedSpaces/{spaceId}`)
+  - `startTime`: `timestamp`
+  - `endTime`: `timestamp`
+  - `status`: `string` (e.g., "confirmed", "cancelled", "completed")
+  - `createdAt`: `timestamp`
+
+### Sample Documents
+
+**Community Document:**
+
+```json
+{
+  "name": "Grandview Apartments",
+  "address": "123 Lakeview Drive, Metropolis",
+  "createdAt": "2025-01-15T10:00:00Z"
+}
+```
+
+**User Document:**
+
+```json
+{
+  "name": "Jane Doe",
+  "email": "jane.doe@email.com",
+  "communityId": "community_abc_123",
+  "createdAt": "2025-02-01T11:30:00Z"
+}
+```
+
+**Shared Space Document:**
+
+```json
+{
+  "name": "Gym",
+  "communityId": "community_abc_123",
+  "capacity": 20,
+  "status": "available",
+  "operatingHours": {
+    "open": "06:00",
+    "close": "22:00"
+  },
+  "rules": ["No food allowed", "Clean equipment after use"]
+}
+```
+
+**Booking Document:**
+
+```json
+{
+  "userId": "user_xyz_789",
+  "spaceId": "space_gym_456",
+  "startTime": "2025-03-10T18:00:00Z",
+  "endTime": "2025-03-10T19:00:00Z",
+  "status": "confirmed",
+  "createdAt": "2025-03-09T14:00:00Z"
+}
+```
