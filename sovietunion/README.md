@@ -70,18 +70,6 @@ return LayoutBuilder(
 );
 ```
 
-What to add to README for submission:
-- Screenshots: `screenshots/phone.png` and `screenshots/tablet.png` (place them here)
-- Short reflection on why responsiveness matters and how the implementation uses `MediaQuery` vs `LayoutBuilder`.
-
-Reflection (short):
-
-- **Why responsive matters:** Ensures layouts adapt to various screen sizes, improving usability and preventing overflow issues.
-- **LayoutBuilder vs MediaQuery:** `LayoutBuilder` uses parent constraints to decide layout structure; `MediaQuery` provides raw device metrics for sizing and scaling.
-- **Team usage:** Use `LayoutBuilder` to change widget trees for breakpoints and `MediaQuery` for proportional sizing (padding, font scaling).
-
-You can capture screenshots from emulators (phone and tablet), add them to `screenshots/`, and reference them in the PR description.
-
 ## Asset Management (images & icons)
 
 This project demonstrates how to add and use local assets (images and icons).
@@ -117,8 +105,39 @@ Icon(Icons.flutter_dash, color: Colors.blue)
 ```
 
 4. Notes & common issues:
+
 - Ensure correct indentation in `pubspec.yaml` (2 spaces).
 - Run `flutter pub get` after adding assets.
 - If images don't appear, confirm file paths and that assets are present.
+
+## Test Cases
+
+- **Logged-in state persists after restart:**
+  1.  Open the app.
+  2.  Log in.
+  3.  Close the app completely.
+  4.  Reopen the app.
+  5.  **Expected:** The app should open directly to the `Dashboard` screen.
+
+- **Logged-out state persists after restart:**
+  1.  Open the app and log in.
+  2.  Log out from the `Dashboard`.
+  3.  Close the app completely.
+  4.  Reopen the app.
+  5.  **Expected:** The app should open to the `AuthScreen`.
+
+- **Session changes reflect immediately:**
+  1.  Log in to the app.
+  2.  You should be on the `Dashboard`.
+  3.  Press the logout button.
+  4.  **Expected:** You should be immediately redirected to the `AuthScreen`.
+
+- **No flickering or incorrect routing:**
+  1.  Open the app when logged out.
+  2.  **Expected:** The `AuthScreen` should be displayed without any brief flashes of the `Dashboard`.
+  3.  Log in.
+  4.  **Expected:** The `Dashboard` should be displayed without any brief flashes of the `AuthScreen`.
+
+You can capture screenshots from emulators (phone and tablet), add them to `screenshots/`, and reference them in the PR description.
 
 Add screenshots of the demo and your `pubspec.yaml` snippet to the `screenshots/` folder for the PR.
