@@ -122,3 +122,112 @@ Icon(Icons.flutter_dash, color: Colors.blue)
 - If images don't appear, confirm file paths and that assets are present.
 
 Add screenshots of the demo and your `pubspec.yaml` snippet to the `screenshots/` folder for the PR.
+
+## Firestore Read Operations (Live Data Display)
+
+Project Title: Soviet Union App — Firestore Read Demo
+
+Brief: This section demonstrates how the app reads data from Cloud Firestore and displays it in real time using `cloud_firestore`.
+
+Prerequisites:
+- Ensure `cloud_firestore` is added to `pubspec.yaml`:
+
+```yaml
+dependencies:
+	cloud_firestore: ^5.0.0
+```
+
+- Run:
+
+```bash
+flutter pub get
+```
+
+- Firebase must already be initialized in `lib/main.dart` (e.g., `Firebase.initializeApp()`).
+
+Code snippets
+
+- Collection read (one-time):
+
+```dart
+final snapshot = await FirebaseFirestore.instance
+		.collection('products')
+		.get();
+
+for (var doc in snapshot.docs) {
+	print(doc.data());
+}
+```
+
+- Document read (one-time):
+
+```dart
+final doc = await FirebaseFirestore.instance
+		.collection('users')
+		.doc('userId')
+		.get();
+
+print(doc.data());
+```
+
+- Real-time collection stream with `StreamBuilder` (recommended):
+
+```dart
+StreamBuilder<QuerySnapshot>(
+	stream: FirebaseFirestore.instance.collection('tasks').snapshots(),
+	builder: (context, snapshot) {
+		if (!snapshot.hasData) return CircularProgressIndicator();
+
+		final tasks = snapshot.data!.docs;
+
+		return ListView.builder(
+			itemCount: tasks.length,
+			itemBuilder: (context, index) {
+				final task = tasks[index].data() as Map<String, dynamic>;
+				return ListTile(
+					title: Text(task['title'] ?? 'No title'),
+					subtitle: Text(task['description'] ?? ''),
+				);
+			},
+		);
+	},
+);
+```
+
+- Single document in UI using `FutureBuilder`:
+
+```dart
+FutureBuilder<DocumentSnapshot>(
+	future: FirebaseFirestore.instance.collection('users').doc('userId').get(),
+	builder: (context, snapshot) {
+		if (!snapshot.hasData) return CircularProgressIndicator();
+
+		final data = snapshot.data!.data() as Map<String, dynamic>?;
+		if (data == null) return Text('No data');
+
+		return Text("Name: ${data['name'] ?? 'Unknown'}");
+	},
+);
+```
+
+Screenshots (add to `screenshots/`):
+- `screenshots/firestore_console.png` — Firestore data in Firebase Console
+- `screenshots/app_firestore_list.png` — App UI showing Firestore data
+
+Reflection
+
+- **Read method used:** Real-time streams (`snapshots()`) for live lists and `FutureBuilder` for one-time profile/document reads.
+- **Why streams:** Streams automatically update the UI when data changes in Firestore — ideal for chat, dashboards, and live lists without manual refresh.
+- **Challenges faced:** Null-safety checks for missing fields and ensuring Firebase is initialized before reads. Use defensive coding: `?.`, `??`, and explicit type casts.
+
+What I changed for this assignment
+
+- Added example Firestore read widget: `lib/screens/firestore_read_example.dart` (see file).
+- Updated this README with code snippets, screenshot placeholders, and a short reflection.
+
+Submission notes
+
+- Commit message: `feat: implemented Firestore read operations for live data display`
+- PR title suggestion: `[Sprint-2] Firestore Read Operations – TeamName`
+- PR description should include: collections/documents read, code snippets, screenshots, and the reflection above.
+
