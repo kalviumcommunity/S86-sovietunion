@@ -311,4 +311,93 @@ FirebaseAuth.instance.authStateChanges().listen((User? user) {
 
 If you'd like, I can prepare the PR body text and add a placeholder screenshot file to the repo.
 
+## Firestore Write & Update Operations
+
+This project includes a new `Tasks` screen that demonstrates how to safely write and update documents in Cloud Firestore.
+
+- **File:** `lib/screens/tasks_screen.dart`
+- **Collection used:** `tasks`
+
+Add (auto-generated ID):
+
+```dart
+await FirebaseFirestore.instance.collection('tasks').add({
+	'title': title,
+	'description': desc,
+	'isCompleted': false,
+	'createdAt': Timestamp.now(),
+});
+```
+
+Set (specific ID — example merge):
+
+```dart
+await FirebaseFirestore.instance
+	.collection('tasks')
+	.doc('taskId123')
+	.set({'title': 'New Task'}, SetOptions(merge: true));
+```
+
+Update (modify specific fields):
+
+```dart
+await FirebaseFirestore.instance
+	.collection('tasks')
+	.doc('taskId123')
+	.update({'completed': true});
+```
+
+Input form (from `TasksScreen`):
+
+```dart
+TextFormField(controller: _titleController, validator: (v) => v==null||v.trim().isEmpty? 'Required' : null)
+TextFormField(controller: _descController, validator: (v) => v==null||v.trim().isEmpty? 'Required' : null)
+ElevatedButton(onPressed: _addTask, child: Text('Add Task'))
+```
+
+Add operation (from `TasksScreen`):
+
+```dart
+Future<void> _addTask() async {
+	if (!_formKey.currentState!.validate()) return;
+	await FirebaseFirestore.instance.collection('tasks').add({
+		'title': title,
+		'description': desc,
+		'isCompleted': false,
+		'createdAt': Timestamp.now(),
+	});
+}
+```
+
+Update operation (from `TasksScreen`):
+
+```dart
+await FirebaseFirestore.instance.collection('tasks').doc(id).update({
+	'title': newTitle,
+	'description': newDesc,
+	'updatedAt': Timestamp.now(),
+});
+```
+
+Best practices demonstrated:
+
+- Validate user input before writing (form validators).
+- Use `Timestamp.now()` to record `createdAt` and `updatedAt`.
+- Use `update()` to avoid accidental overwrites; use `set(..., SetOptions(merge: true))` for partial merges.
+- Wrap writes in `try/catch` and show user-friendly errors via `SnackBar`.
+
+Testing steps:
+
+1. Run the app (`flutter run`).
+2. Open the `Tasks` screen.
+3. Add a task using the form — confirm it appears in Firestore Console under `tasks`.
+4. Tap edit on a task, change fields and save — confirm fields update in Firestore.
+
+Reflection:
+
+- Secure writes matter to prevent accidental data loss and maintain data integrity; prefer `update()` for partial changes.
+- `add()` creates a document with an auto-generated ID; `set()` writes a document at a specific ID (overwrites by default); `update()` changes only specified fields and fails if the document doesn't exist.
+- Validation prevents empty or malformed records from being saved, reducing data corruption and simplifying rules.
+
+
 

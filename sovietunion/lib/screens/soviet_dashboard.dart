@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sovietunion/screens/tasks_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -53,6 +54,14 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.task),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const TasksScreen()),
+            ),
+          ),
+        ],
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
