@@ -124,17 +124,16 @@ Icon(Icons.flutter_dash, color: Colors.blue)
 Add screenshots of the demo and your `pubspec.yaml` snippet to the `screenshots/` folder for the PR.
 
 ## Firestore Read Operations (Live Data Display)
+Project Title: Soviet Union App — Firestore Queries, Filters & Ordering
 
-Project Title: Soviet Union App — Firestore Read Demo
-
-Brief: This section demonstrates how the app reads data from Cloud Firestore and displays it in real time using `cloud_firestore`.
+Brief: Demonstrates Firestore queries (filters, ordering, and limits) and how to display results in Flutter using `StreamBuilder` and `FutureBuilder`.
 
 Prerequisites:
-- Ensure `cloud_firestore` is added to `pubspec.yaml`:
+- Ensure `cloud_firestore` is added to `pubspec.yaml` (this project uses `cloud_firestore` from pubspec):
 
 ```yaml
 dependencies:
-	cloud_firestore: ^5.0.0
+	cloud_firestore: ^6.1.2
 ```
 
 - Run:
@@ -145,89 +144,65 @@ flutter pub get
 
 - Firebase must already be initialized in `lib/main.dart` (e.g., `Firebase.initializeApp()`).
 
-Code snippets
+Implemented query types
+- Equality filters: `where('status', isEqualTo: 'active')`
+- Comparison filters: `where('price', isGreaterThan: 100)`
+- Array filters: `where('tags', arrayContains: 'popular')`
+- Ordering: `orderBy('createdAt', descending: true)` and multi-field ordering
+- Limiting results: `limit(10)`
 
-- Collection read (one-time):
+Example code snippets (from `lib/screens/firestore_read_example.dart`)
 
-```dart
-final snapshot = await FirebaseFirestore.instance
-		.collection('products')
-		.get();
-
-for (var doc in snapshot.docs) {
-	print(doc.data());
-}
-```
-
-- Document read (one-time):
+- where (equality):
 
 ```dart
-final doc = await FirebaseFirestore.instance
-		.collection('users')
-		.doc('userId')
-		.get();
-
-print(doc.data());
+query = FirebaseFirestore.instance
+	.collection('tasks')
+	.where('isCompleted', isEqualTo: false);
 ```
 
-- Real-time collection stream with `StreamBuilder` (recommended):
+- arrayContains:
+
+```dart
+query = query.where('tags', arrayContains: 'popular');
+```
+
+- orderBy + limit:
+
+```dart
+query = query
+	.orderBy('priority', descending: true)
+	.limit(10);
+```
+
+Using StreamBuilder for live updates:
 
 ```dart
 StreamBuilder<QuerySnapshot>(
-	stream: FirebaseFirestore.instance.collection('tasks').snapshots(),
+	stream: query.snapshots(),
 	builder: (context, snapshot) {
 		if (!snapshot.hasData) return CircularProgressIndicator();
-
-		final tasks = snapshot.data!.docs;
-
-		return ListView.builder(
-			itemCount: tasks.length,
-			itemBuilder: (context, index) {
-				final task = tasks[index].data() as Map<String, dynamic>;
-				return ListTile(
-					title: Text(task['title'] ?? 'No title'),
-					subtitle: Text(task['description'] ?? ''),
-				);
-			},
-		);
+		final docs = snapshot.data!.docs;
+		return ListView.builder(...);
 	},
-);
+)
 ```
 
-- Single document in UI using `FutureBuilder`:
-
-```dart
-FutureBuilder<DocumentSnapshot>(
-	future: FirebaseFirestore.instance.collection('users').doc('userId').get(),
-	builder: (context, snapshot) {
-		if (!snapshot.hasData) return CircularProgressIndicator();
-
-		final data = snapshot.data!.data() as Map<String, dynamic>?;
-		if (data == null) return Text('No data');
-
-		return Text("Name: ${data['name'] ?? 'Unknown'}");
-	},
-);
-```
-
-Screenshots (add to `screenshots/`):
-- `screenshots/firestore_console.png` — Firestore data in Firebase Console
-- `screenshots/app_firestore_list.png` — App UI showing Firestore data
+Screenshots (placeholders)
+- `screenshots/firestore_console.png` — Firestore console view (add after capturing)
+- `screenshots/app_firestore_list.png` — App UI showing filtered/sorted list
 
 Reflection
+- **Which query types used:** Equality (`isEqualTo`), `arrayContains`, `orderBy`, and `limit`.
+- **Why sorting/filtering improves UX:** Reduces noise, surfaces relevant items first (e.g., high-priority tasks), lowers bandwidth and speeds up UI.
+- **Index notes:** Using `where` and `orderBy` on different fields may require a composite index — Firestore console provides a link to create the index when needed.
 
-- **Read method used:** Real-time streams (`snapshots()`) for live lists and `FutureBuilder` for one-time profile/document reads.
-- **Why streams:** Streams automatically update the UI when data changes in Firestore — ideal for chat, dashboards, and live lists without manual refresh.
-- **Challenges faced:** Null-safety checks for missing fields and ensuring Firebase is initialized before reads. Use defensive coding: `?.`, `??`, and explicit type casts.
-
-What I changed for this assignment
-
-- Added example Firestore read widget: `lib/screens/firestore_read_example.dart` (see file).
-- Updated this README with code snippets, screenshot placeholders, and a short reflection.
+What changed for this assignment
+- Implemented interactive query example: `lib/screens/firestore_read_example.dart` (UI controls for `where`, `orderBy`, and `limit`).
+- Updated README with specific query examples, code snippets, and reflection.
 
 Submission notes
-
-- Commit message: `feat: implemented Firestore read operations for live data display`
-- PR title suggestion: `[Sprint-2] Firestore Read Operations – TeamName`
-- PR description should include: collections/documents read, code snippets, screenshots, and the reflection above.
+- Commit message: `feat: implemented Firestore queries, filters, and ordering in UI`
+- PR title suggestion: `[Sprint-2] Firestore Queries & Filtering – TeamName`
+- PR description should include: feature explanation, code snippets, screenshots, and reflection. 
 
