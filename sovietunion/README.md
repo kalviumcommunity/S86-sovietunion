@@ -393,6 +393,58 @@ Testing steps:
 3. Add a task using the form — confirm it appears in Firestore Console under `tasks`.
 4. Tap edit on a task, change fields and save — confirm fields update in Firestore.
 
+## Real-Time Sync (Snapshot Listeners)
+
+This app demonstrates real-time updates using Firestore snapshot listeners.
+
+Collection listener (used in `TasksScreen`):
+
+```dart
+StreamBuilder<QuerySnapshot>(
+	stream: FirebaseFirestore.instance.collection('tasks').snapshots(),
+	builder: (context, snapshot) { /* build list from snapshot.data!.docs */ }
+)
+```
+
+Document listener (used in `TaskDetailScreen`):
+
+```dart
+StreamBuilder<DocumentSnapshot>(
+	stream: FirebaseFirestore.instance.collection('tasks').doc(taskId).snapshots(),
+	builder: (context, snapshot) { /* show single doc fields */ }
+)
+```
+
+Manual change detection using `listen()` and `docChanges` (optional, used by toggle in `TasksScreen`):
+
+```dart
+final sub = FirebaseFirestore.instance
+	.collection('tasks')
+	.snapshots()
+	.listen((snapshot) {
+		for (var change in snapshot.docChanges) {
+			if (change.type == DocumentChangeType.added) print('New');
+			if (change.type == DocumentChangeType.modified) print('Updated');
+			if (change.type == DocumentChangeType.removed) print('Removed');
+		}
+	});
+// sub.cancel() when no longer needed
+```
+
+UX tips:
+
+- Use `StreamBuilder` for UI-bound live updates — it automatically rebuilds on changes.
+- Use `.listen()` for side effects (showing snackbars, triggering local notifications).
+- Always handle empty/loading states as shown in `TasksScreen`.
+
+Testing real-time behavior:
+
+1. Open `Tasks` screen in app.
+2. Enable live notifications (bell icon in AppBar) to see snackbars on add/update/remove.
+3. Add a document via the app or Firestore Console — UI updates immediately.
+4. Edit a document in the Console — `TaskDetailScreen` reflects changes instantly.
+
+
 Reflection:
 
 - Secure writes matter to prevent accidental data loss and maintain data integrity; prefer `update()` for partial changes.

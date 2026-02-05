@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:sovietunion/screens/task_detail.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -13,6 +16,8 @@ class _TasksScreenState extends State<TasksScreen> {
   final _descController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final CollectionReference _tasksCol = FirebaseFirestore.instance.collection('tasks');
+  StreamSubscription<QuerySnapshot>? _colSub;
+  bool _listening = false;
 
   Future<void> _addTask() async {
     final title = _titleController.text.trim();
@@ -83,6 +88,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
   @override
   void dispose() {
+    _colSub?.cancel();
     _titleController.dispose();
     _descController.dispose();
     super.dispose();
@@ -91,7 +97,16 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tasks')),
+      appBar: AppBar(
+        title: const Text('Tasks'),
+        actions: [
+          IconButton(
+            icon: Icon(_listening ? Icons.notifications_active : Icons.notifications_none),
+            tooltip: _listening ? 'Disable live notifications' : 'Enable live notifications',
+            onPressed: () => _toggleListening(),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -150,6 +165,10 @@ class _TasksScreenState extends State<TasksScreen> {
                                 icon: const Icon(Icons.edit),
                                 onPressed: () => _updateTask(doc.id, data),
                               ),
+                              IconButton(
+                                icon: const Icon(Icons.open_in_new),
+                                onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => TaskDetailScreen(taskId: doc.id))),
+                              ),
                             ],
                           ),
                         ),
@@ -163,5 +182,34 @@ class _TasksScreenState extends State<TasksScreen> {
         ),
       ),
     );
+  }
+
+  void _toggleListening() {
+    if (_listening) {
+      _colSub?.cancel();
+      _colSub = null;
+      setState(() => _listening = false);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Live notifications disabled')));
+      return;
+    }
+
+    _colSub = _tasksCol.snapshots().listen((snapshot) {
+      for (var change in snapshot.docChanges) {
+        final data = change.doc.data() as Map<String, dynamic>?;
+        final title = data?['title'] ?? '(no title)';
+        final type = change.type;
+        String msg;
+        if (type == DocumentChangeType.added) msg = 'Task added: $title';
+        else if (type == DocumentChangeType.modified) msg = 'Task updated: $title';
+        else if (type == DocumentChangeType.removed) msg = 'Task removed: $title';
+        else msg = 'Task changed: $title';
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+      }
+    }, onError: (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Listener error: $e')));
+    });
+
+    setState(() => _listening = true);
+    if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Live notifications enabled')));
   }
 }
