@@ -206,3 +206,85 @@ Submission notes
 - PR title suggestion: `[Sprint-2] Firestore Queries & Filtering – TeamName`
 - PR description should include: feature explanation, code snippets, screenshots, and reflection. 
 
+## Cloud Functions (Serverless) Integration
+
+This project includes a simple example of Firebase Cloud Functions (callable + Firestore trigger) and a Flutter wrapper to call the callable function.
+
+Files added:
+- `functions/index.js` — callable `sayHello` and Firestore `newUserCreated` trigger.
+- `lib/services/functions_service.dart` — simple Dart wrapper to call the `sayHello` function.
+
+Cloud Function: `functions/index.js`
+
+```js
+const functions = require('firebase-functions');
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+exports.sayHello = functions.https.onCall((data, context) => {
+	const name = data.name || 'User';
+	return { message: `Hello, ${name}!` };
+});
+
+exports.newUserCreated = functions.firestore
+	.document('users/{userId}')
+	.onCreate((snap, context) => {
+		const data = snap.data();
+		console.log('New user created:', data);
+		return null;
+	});
+```
+
+Flutter callable invocation (`lib/services/functions_service.dart`):
+
+```dart
+import 'package:cloud_functions/cloud_functions.dart';
+
+class FunctionsService {
+	static final FirebaseFunctions _functions = FirebaseFunctions.instance;
+
+	static Future<String> sayHello(String name) async {
+		final callable = _functions.httpsCallable('sayHello');
+		final result = await callable.call({'name': name});
+		final data = result.data as Map<String, dynamic>?;
+		return data?['message'] as String? ?? '';
+	}
+}
+```
+
+How to deploy (local dev machine):
+
+1. Install Firebase CLI:
+
+```bash
+npm install -g firebase-tools
+firebase login
+```
+
+2. Initialize functions (if not already):
+
+```bash
+cd sovietunion
+firebase init functions
+```
+
+3. Deploy only functions:
+
+```bash
+firebase deploy --only functions
+```
+
+Testing & verification:
+- Call `FunctionsService.sayHello('Alex')` from UI code and display the returned message.
+- Create a new document in `users/` collection to trigger `newUserCreated` and check logs in Firebase Console → Functions → Logs.
+
+Screenshots to include in PR:
+- `screenshots/functions_logs.png` — Firebase Functions logs showing execution
+- `screenshots/app_sayhello.png` — App UI showing the returned message from callable function
+
+Reflection:
+- Serverless functions reduce backend overhead by removing server management, scaling automatically, and integrating with Firebase services.
+- This implementation includes both a callable function (invoked from Flutter) and an event-triggered function (Firestore `onCreate`).
+- Real-world use cases: sending welcome emails/notifications, sanitizing user input, generating derived data, running background data processing.
+
+

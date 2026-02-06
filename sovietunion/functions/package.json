@@ -1,0 +1,14 @@
+{
+  "name": "sovietunion-functions",
+  "description": "Cloud Functions for Soviet Union app",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.4.1"
+  }
+}
