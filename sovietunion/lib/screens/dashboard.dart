@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sovietunion/screens/storage_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -58,10 +59,43 @@ class _DashboardState extends State<Dashboard> {
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),
-        itemCount: _spaces.length,
+        itemCount: _spaces.length + 1,
         itemBuilder: (context, index) {
+          if (index == _spaces.length) {
+            return _buildAddStorageCard();
+          }
           return _buildSpaceCard(_spaces[index]);
         },
+      ),
+    );
+  }
+
+  Widget _buildAddStorageCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const StorageScreen()),
+        );
+      },
+      child: Card(
+        elevation: 2,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.storage, size: 48, color: Colors.blue),
+              SizedBox(height: 12),
+              Text(
+                'Firebase Storage',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

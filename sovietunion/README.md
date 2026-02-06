@@ -314,3 +314,53 @@ This collection tracks all reservations made by users.
   "createdAt": "2025-03-09T14:00:00Z"
 }
 ```
+
+## Firebase Storage Reflection
+
+### Upload Flow
+
+The process of uploading an image from the device to Firebase Storage involves these main steps:
+
+1.  **Image Picker**: The `image_picker` package is used to allow the user to select an image from their device's gallery.
+    ```dart
+    final ImagePicker picker = ImagePicker();
+    final XFile? file = await picker.pickImage(source: ImageSource.gallery);
+    ```
+2.  **Upload Logic**: The selected image file is then uploaded to a specified path in Firebase Storage. A unique filename is generated using the current timestamp to avoid overwriting files.
+    ```dart
+    final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    await FirebaseStorage.instance
+      .ref("uploads/$fileName.jpg")
+      .putFile(File(file!.path));
+    ```
+3.  **Getting Download URL**: After the upload is complete, a public download URL is retrieved for the image. This URL can be stored (e.g., in Firestore) and used to display the image in the app.
+    ```dart
+    final url = await FirebaseStorage.instance
+      .ref("uploads/$fileName.jpg")
+      .getDownloadURL();
+    ```
+
+### Why Firebase Storage is Useful
+
+Firebase Storage is incredibly useful for media-heavy applications for several reasons:
+
+- **Scalability**: It's built on Google Cloud Storage, providing massive scalability. You don't have to worry about running out of space or handling traffic spikes.
+- **Security**: It has a robust security model, allowing you to control who can upload and download files based on Firebase Authentication and custom rules.
+- **Cost-Effective**: It offers a generous free tier and a pay-as-you-go pricing model, making it affordable for projects of all sizes.
+- **Easy Integration**: It's part of the Firebase ecosystem, so it integrates seamlessly with other Firebase services like Firestore, Authentication, and Cloud Functions.
+
+### Potential Use Cases in This App
+
+In the context of the "Soviet Union" app, file uploads could be used for:
+
+- **User Profile Pictures**: Allowing users to upload their own profile pictures.
+- **Shared Space Images**: Users could upload images of the shared spaces, like photos of an event in the community hall or a picture of a maintenance issue.
+- **Documents**: Uploading and sharing documents related to the community.
+
+### Issues Faced
+
+During the implementation, a dependency conflict arose between `firebase_auth` and `firebase_storage`. The versions I was using were not compatible.
+
+`Because firebase_auth 6.1.4 depends on firebase_core ^4.4.0 and firebase_storage 12.0.0 depends on firebase_core ^3.1.0, firebase_auth 6.1.4 is incompatible with firebase_storage 12.0.0.`
+
+To resolve this, I had to downgrade the `firebase_auth` package to a compatible version (`^5.0.0`) in `pubspec.yaml` to make it work with `firebase_storage: ^12.0.0`. After updating the dependency and running `flutter pub get`, the issue was resolved.
