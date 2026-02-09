@@ -399,6 +399,40 @@ This app demonstrates real-time updates using Firestore snapshot listeners.
 
 Collection listener (used in `TasksScreen`):
 
+## Firestore Security Rules (Protecting User Data)
+
+Securing Cloud Firestore is essential before releasing your app. The repository contains a recommended rules file at `firestore.rules` that demonstrates a safe baseline:
+
+- Block anonymous writes — require `request.auth != null`.
+- Allow users to read/write only their own `users/{uid}` document.
+- Allow `tasks` creation only when `owner == request.auth.uid` and allow updates/deletes only by the owner or an admin (custom claim `admin == true`).
+- Provide an `admin` collection for admin-only operations protected by a custom claim check.
+
+Example rules are in the file: `firestore.rules`.
+
+Deploy rules with the Firebase CLI from the project root (where your `firebase.json` lives):
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+Testing rules:
+
+1. Open Firebase Console → Firestore → Rules and use the Rules Playground to simulate requests with a `request.auth.uid` value.
+2. Test both authenticated and unauthenticated scenarios and try read/write on `users/{uid}` and `tasks/{taskId}`.
+
+Client-side safe usage (example `lib/services/firestore_service.dart`):
+
+- `updateUserProfile(...)` writes to `users/{uid}` using the signed-in user's UID.
+- `addTask(...)` automatically sets `owner` to the authenticated UID.
+- Security rules still run on the server—client checks are helpful UX guards but not a replacement for rules.
+
+Common issues:
+
+- `PERMISSION_DENIED`: Verify the user is signed in and UID matches the document path used in the request.
+- Admin checks: set a custom claim `admin` in your Firebase Admin SDK and re-authenticate the user to refresh ID token.
+
+
 ## Firebase Cloud Messaging (Push Notifications)
 
 This project can be extended to receive push notifications via Firebase Cloud Messaging (FCM).
