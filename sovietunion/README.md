@@ -399,6 +399,31 @@ This app demonstrates real-time updates using Firestore snapshot listeners.
 
 Collection listener (used in `TasksScreen`):
 
+## Firebase Cloud Messaging (Push Notifications)
+
+This project can be extended to receive push notifications via Firebase Cloud Messaging (FCM).
+
+Quick setup steps:
+
+- **Add dependency:** `firebase_messaging` to `pubspec.yaml` and run `flutter pub get`.
+- **Background handler:** A top-level handler is required. See `lib/services/notification_service.dart` for an example `firebaseMessagingBackgroundHandler` annotated with `@pragma('vm:entry-point')`.
+- **Initialize:** Register the background handler and initialize messaging before `runApp()` — `lib/main.dart` already calls `FirebaseMessaging.onBackgroundMessage(...)` and `NotificationService().initialize()`.
+- **Request permissions:** The example requests notification permission on app start.
+- **Token:** The service logs the device FCM token — use it to send test messages from the Firebase Console.
+
+Testing notifications:
+
+1. Open Firebase Console → Cloud Messaging → Send your first message.
+2. Use the device token printed in the app logs as the target.
+3. Send a notification while the app is foreground/background/terminated to verify behavior.
+
+Common platform notes:
+
+- **Android:** Ensure `google-services.json` is present and `apply plugin: 'com.google.gms.google-services'` is configured in Gradle files.
+- **iOS:** Add `GoogleService-Info.plist` and configure APNs in the Firebase Console; add push capability and permission entries in `Info.plist`.
+
+If you'd like, I can run through adding `firebase_messaging` to `pubspec.yaml` and wiring the service into `main.dart` and open a small PR with these changes.
+
 ```dart
 StreamBuilder<QuerySnapshot>(
 	stream: FirebaseFirestore.instance.collection('tasks').snapshots(),
