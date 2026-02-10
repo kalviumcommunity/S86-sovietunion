@@ -37,6 +37,9 @@ dependencies:
   cloud_functions: ^5.0.0
   google_maps_flutter: any
   geolocator: any
+  firebase_core: any
+  firebase_auth: any
+  cloud_firestore: any
 
 dev_dependencies:
   flutter_test:
