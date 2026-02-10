@@ -68,6 +68,86 @@ return LayoutBuilder(
 		// build header and grid using computed values
 	},
 );
+## Google Maps Integration
+
+This section documents how to enable Google Maps in this Flutter app, obtain API keys, configure Android/iOS, and a minimal example using `google_maps_flutter`.
+
+1. Add dependency
+
+In `pubspec.yaml` add:
+
+```yaml
+dependencies:
+  google_maps_flutter: any
+```
+
+Run:
+
+```bash
+flutter pub get
+```
+
+2. Get an API Key
+
+- Go to Google Cloud Console → APIs & Services → Credentials
+- Enable: Maps SDK for Android, Maps SDK for iOS (optional: Places API, Geocoding API)
+- Create an API key and copy it.
+
+3. Android configuration
+
+Edit `android/app/src/main/AndroidManifest.xml` and add inside `<application>`:
+
+```xml
+<meta-data
+    android:name="com.google.android.geo.API_KEY"
+    android:value="YOUR_API_KEY_HERE"/>
+```
+
+Also add location permission (if using user location):
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+```
+
+4. iOS configuration
+
+In `ios/Runner/AppDelegate.swift` (or `AppDelegate.m`) add during startup:
+
+```swift
+GMSServices.provideAPIKey("YOUR_API_KEY_HERE")
+```
+
+And add to `ios/Runner/Info.plist`:
+
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This app requires location access to display maps.</string>
+```
+
+5. Minimal Flutter example
+
+This repository includes a demo `MapScreen` at `lib/screens/map_screen.dart` showing:
+- initial camera position (New Delhi)
+- a marker
+- `myLocationEnabled: true`
+
+You can open it from the app home: press **Open Map Demo**.
+
+6. Common issues & fixes
+
+- Blank map on Android: API key missing in `AndroidManifest.xml` — add metadata.
+- Map shows "For development only": Billing not enabled — enable billing in Google Cloud.
+- iOS crash on launch: Missing API key in `AppDelegate` — call `GMSServices.provideAPIKey()`.
+- Location not shown: Permission missing or denied — request runtime permission on device/emulator.
+
+7. Resources
+
+- Google Maps Flutter package: https://pub.dev/packages/google_maps_flutter
+- Google Maps Platform docs: https://developers.google.com/maps
+- Google Cloud Console: https://console.cloud.google.com
+
+---
+
 ```
 
 What to add to README for submission:

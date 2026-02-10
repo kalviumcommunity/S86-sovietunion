@@ -270,3 +270,41 @@ ListView.builder(
   - Add or update `home_screen.dart` if you'd like a dedicated file.
 
   Tell me which of these you want me to implement.
+
+  # 📍 Google Maps Integration in Flutter
+
+## 📌 Assignment Title  
+Integrating Google Maps SDK for Flutter and Displaying Maps
+
+---
+
+## 📖 Overview  
+This project demonstrates how to integrate the Google Maps SDK into a Flutter application. The app displays an interactive Google Map that supports zooming, panning, markers, and user location access. Google Maps integration is essential for building location-based applications such as cab booking, delivery tracking, and navigation systems.
+
+---
+
+## 🎯 Objectives  
+- Integrate Google Maps SDK with Flutter  
+- Configure Google Maps for Android and iOS  
+- Display an interactive map view  
+- Enable user location services  
+- Add markers to the map  
+
+---
+
+## 🛠️ Technologies Used  
+- Flutter  
+- Dart  
+- Google Maps SDK  
+- Google Cloud Platform  
+
+---
+
+## 📦 Dependencies  
+
+Add the following dependency in `pubspec.yaml`:
+
+```yaml
+dependencies:
+  google_maps_flutter: ^latest
+
