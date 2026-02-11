@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/profile_form_screen.dart';
+import 'screens/items_screen.dart';
+import 'screens/favorites_screen.dart';
+import 'providers/favorites_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,14 +18,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Soviet Union',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        scaffoldBackgroundColor: Colors.grey[200],
+    return ChangeNotifierProvider(
+      create: (context) => FavoritesProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Soviet Union',
+        theme: ThemeData(
+          primarySwatch: Colors.red,
+          scaffoldBackgroundColor: Colors.grey[200],
+        ),
+        home: const FirebaseInitWrapper(),
       ),
-      home: const FirebaseInitWrapper(),
     );
   }
 }
@@ -61,6 +68,28 @@ class HomeMenu extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            ElevatedButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ItemsScreen()),
+              ),
+              child: const Text('My Items (Screen A)'),
+            ),
+            const SizedBox(height: 12),
+            Consumer<FavoritesProvider>(
+              builder: (context, favoritesProvider, child) {
+                return ElevatedButton(
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                  ),
+                  child: Text(
+                    'My Favorites (${favoritesProvider.favoritesCount})',
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () => Navigator.push(
                 context,

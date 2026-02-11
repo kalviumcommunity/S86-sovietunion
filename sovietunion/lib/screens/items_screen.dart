@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/firestore_service.dart';
+import '../models/item.dart';
+import '../providers/favorites_provider.dart';
 
 class ItemsScreen extends StatefulWidget {
   const ItemsScreen({super.key});
@@ -26,12 +29,21 @@ class _ItemsScreenState extends State<ItemsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: _titleController, decoration: const InputDecoration(labelText: 'Title')),
-            TextField(controller: _descController, decoration: const InputDecoration(labelText: 'Description')),
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(labelText: 'Title'),
+            ),
+            TextField(
+              controller: _descController,
+              decoration: const InputDecoration(labelText: 'Description'),
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               final t = _titleController.text.trim();
@@ -58,18 +70,30 @@ class _ItemsScreenState extends State<ItemsScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: _titleController, decoration: const InputDecoration(labelText: 'Title')),
-            TextField(controller: _descController, decoration: const InputDecoration(labelText: 'Description')),
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(labelText: 'Title'),
+            ),
+            TextField(
+              controller: _descController,
+              decoration: const InputDecoration(labelText: 'Description'),
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               final t = _titleController.text.trim();
               final d = _descController.text.trim();
               if (t.isEmpty) return;
-              await FirestoreService.updateItem(id, {'title': t, 'description': d});
+              await FirestoreService.updateItem(id, {
+                'title': t,
+                'description': d,
+              });
               Navigator.of(context).pop();
             },
             child: const Text('Update'),
@@ -90,8 +114,10 @@ class _ItemsScreenState extends State<ItemsScreen> {
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: FirestoreService.streamItems(_uid),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) return const Center(child: Text('No items'));
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return const Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty)
+            return const Center(child: Text('No items'));
 
           final docs = snapshot.data!.docs;
           return ListView.builder(
@@ -99,19 +125,57 @@ class _ItemsScreenState extends State<ItemsScreen> {
             itemBuilder: (context, index) {
               final doc = docs[index];
               final data = doc.data();
-              final title = data['title'] ?? '';
-              final desc = data['description'] ?? '';
+              final item = Item.fromMap(doc.id, data);
 
-              return ListTile(
-                title: Text(title),
-                subtitle: Text(desc),
-                onTap: () => _openUpdateDialog(doc.id, data),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    await FirestoreService.deleteItem(doc.id);
-                  },
-                ),
+              return Consumer<FavoritesProvider>(
+                builder: (context, favoritesProvider, child) {
+                  final isFavorite = favoritesProvider.isFavorite(item);
+
+                  return Card(
+                    margin: const EdgeInsets.all(8.0),
+                    child: ListTile(
+                      title: Text(item.title),
+                      subtitle: Text(item.description),
+                      onTap: () => _openUpdateDialog(doc.id, data),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              isFavorite
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: isFavorite ? Colors.red : null,
+                            ),
+                            onPressed: () {
+                              favoritesProvider.toggleFavorite(item);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    isFavorite
+                                        ? '${item.title} removed from favorites'
+                                        : '${item.title} added to favorites',
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete),
+                            onPressed: () async {
+                              await FirestoreService.deleteItem(doc.id);
+                              // Remove from favorites if it was favorited
+                              if (isFavorite) {
+                                favoritesProvider.removeFromFavorites(item);
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
