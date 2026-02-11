@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/login_screen.dart';
 import 'screens/map_screen.dart';
+import 'screens/profile_form_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,6 +75,14 @@ class HomeMenu extends StatelessWidget {
                 MaterialPageRoute(builder: (_) => const MapScreen()),
               ),
               child: const Text('Open Map Demo'),
+            ),
+            const SizedBox(height: 12),
+            ElevatedButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileFormScreen()),
+              ),
+              child: const Text('Profile Details Form'),
             ),
           ],
         ),

@@ -54,7 +54,7 @@ on `constraints.maxWidth` (from `LayoutBuilder`) while using
 
 Key snippet:
 
-```dart
+````dart
 // inside build()
 return LayoutBuilder(
 	builder: (context, constraints) {
@@ -79,7 +79,7 @@ In `pubspec.yaml` add:
 ```yaml
 dependencies:
   google_maps_flutter: any
-```
+````
 
 Run:
 
@@ -127,6 +127,7 @@ And add to `ios/Runner/Info.plist`:
 5. Minimal Flutter example
 
 This repository includes a demo `MapScreen` at `lib/screens/map_screen.dart` showing:
+
 - initial camera position (New Delhi)
 - a marker
 - `myLocationEnabled: true`
@@ -169,14 +170,16 @@ This project demonstrates how to add and use local assets (images and icons).
 1. Folder structure (create under project root):
 
 ```
+
 assets/
-	images/
-		logo.png
-		banner.jpg
-	icons/
-		star.png
-		profile.png
-```
+images/
+logo.png
+banner.jpg
+icons/
+star.png
+profile.png
+
+````
 
 2. Registration: `pubspec.yaml` now includes:
 
@@ -185,7 +188,7 @@ flutter:
 	assets:
 		- assets/images/
 		- assets/icons/
-```
+````
 
 3. Demo screen: `lib/screens/asset_demo.dart` shows usage of `Image.asset` and built-in `Icon` widgets.
 
@@ -197,6 +200,7 @@ Icon(Icons.flutter_dash, color: Colors.blue)
 ```
 
 4. Notes & common issues:
+
 - Ensure correct indentation in `pubspec.yaml` (2 spaces).
 - Run `flutter pub get` after adding assets.
 - If images don't appear, confirm file paths and that assets are present.
@@ -204,11 +208,13 @@ Icon(Icons.flutter_dash, color: Colors.blue)
 Add screenshots of the demo and your `pubspec.yaml` snippet to the `screenshots/` folder for the PR.
 
 ## Firestore Read Operations (Live Data Display)
+
 Project Title: Soviet Union App — Firestore Queries, Filters & Ordering
 
 Brief: Demonstrates Firestore queries (filters, ordering, and limits) and how to display results in Flutter using `StreamBuilder` and `FutureBuilder`.
 
 Prerequisites:
+
 - Ensure `cloud_firestore` is added to `pubspec.yaml` (this project uses `cloud_firestore` from pubspec):
 
 ```yaml
@@ -225,6 +231,7 @@ flutter pub get
 - Firebase must already be initialized in `lib/main.dart` (e.g., `Firebase.initializeApp()`).
 
 Implemented query types
+
 - Equality filters: `where('status', isEqualTo: 'active')`
 - Comparison filters: `where('price', isGreaterThan: 100)`
 - Array filters: `where('tags', arrayContains: 'popular')`
@@ -269,50 +276,55 @@ StreamBuilder<QuerySnapshot>(
 ```
 
 Screenshots (placeholders)
+
 - `screenshots/firestore_console.png` — Firestore console view (add after capturing)
 - `screenshots/app_firestore_list.png` — App UI showing filtered/sorted list
 
 Reflection
+
 - **Which query types used:** Equality (`isEqualTo`), `arrayContains`, `orderBy`, and `limit`.
 - **Why sorting/filtering improves UX:** Reduces noise, surfaces relevant items first (e.g., high-priority tasks), lowers bandwidth and speeds up UI.
 - **Index notes:** Using `where` and `orderBy` on different fields may require a composite index — Firestore console provides a link to create the index when needed.
 
 What changed for this assignment
+
 - Implemented interactive query example: `lib/screens/firestore_read_example.dart` (UI controls for `where`, `orderBy`, and `limit`).
 - Updated README with specific query examples, code snippets, and reflection.
 
 Submission notes
+
 - Commit message: `feat: implemented Firestore queries, filters, and ordering in UI`
 - PR title suggestion: `[Sprint-2] Firestore Queries & Filtering – TeamName`
-- PR description should include: feature explanation, code snippets, screenshots, and reflection. 
+- PR description should include: feature explanation, code snippets, screenshots, and reflection.
 
 ## Cloud Functions (Serverless) Integration
 
 This project includes a simple example of Firebase Cloud Functions (callable + Firestore trigger) and a Flutter wrapper to call the callable function.
 
 Files added:
+
 - `functions/index.js` — callable `sayHello` and Firestore `newUserCreated` trigger.
 - `lib/services/functions_service.dart` — simple Dart wrapper to call the `sayHello` function.
 
 Cloud Function: `functions/index.js`
 
 ```js
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
 admin.initializeApp();
 
 exports.sayHello = functions.https.onCall((data, context) => {
-	const name = data.name || 'User';
-	return { message: `Hello, ${name}!` };
+  const name = data.name || "User";
+  return { message: `Hello, ${name}!` };
 });
 
 exports.newUserCreated = functions.firestore
-	.document('users/{userId}')
-	.onCreate((snap, context) => {
-		const data = snap.data();
-		console.log('New user created:', data);
-		return null;
-	});
+  .document("users/{userId}")
+  .onCreate((snap, context) => {
+    const data = snap.data();
+    console.log("New user created:", data);
+    return null;
+  });
 ```
 
 Flutter callable invocation (`lib/services/functions_service.dart`):
@@ -355,16 +367,145 @@ firebase deploy --only functions
 ```
 
 Testing & verification:
+
 - Call `FunctionsService.sayHello('Alex')` from UI code and display the returned message.
 - Create a new document in `users/` collection to trigger `newUserCreated` and check logs in Firebase Console → Functions → Logs.
 
 Screenshots to include in PR:
+
 - `screenshots/functions_logs.png` — Firebase Functions logs showing execution
 - `screenshots/app_sayhello.png` — App UI showing the returned message from callable function
 
 Reflection:
+
 - Serverless functions reduce backend overhead by removing server management, scaling automatically, and integrating with Firebase services.
 - This implementation includes both a callable function (invoked from Flutter) and an event-triggered function (Firestore `onCreate`).
 - Real-world use cases: sending welcome emails/notifications, sanitizing user input, generating derived data, running background data processing.
 
+## Profile Details Form with Comprehensive Validation
 
+This project includes a complete profile form with extensive validation rules and user feedback. The form demonstrates proper input validation patterns, error handling, and user experience best practices.
+
+Files added:
+
+- `lib/screens/profile_form_screen.dart` — Complete profile form with validation
+
+### Validation Rules Implemented
+
+The form includes the following validation requirements:
+
+1. **Full Name**: Required field with minimum length validation
+2. **Email Address**: Must follow proper email format using regex validation
+3. **Phone Number**: Must be exactly 10 digits with input formatting
+4. **Password**: Minimum 8 characters with visibility toggle
+5. **Confirm Password**: Must match the password field (real-time validation)
+
+### Key Features
+
+**Input Validation & Formatting:**
+
+```dart
+String? _validateEmail(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Email is required';
+  }
+
+  final emailRegex = RegExp(
+    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+  );
+
+  if (!emailRegex.hasMatch(value.trim())) {
+    return 'Please enter a valid email address';
+  }
+  return null;
+}
+```
+
+**Phone Number Formatting:**
+
+```dart
+TextFormField(
+  controller: _phoneController,
+  keyboardType: TextInputType.number,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+    LengthLimitingTextInputFormatter(10),
+  ],
+  validator: _validatePhoneNumber,
+  // ...
+)
+```
+
+**Password Matching Validation:**
+
+```dart
+String? _validateConfirmPassword(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Please confirm your password';
+  }
+  if (value != _passwordController.text) {
+    return 'Passwords do not match';
+  }
+  return null;
+}
+```
+
+### Demo Capabilities
+
+**1. Validation Error demonstration:**
+
+- Submit empty form to trigger "required field" errors
+- Enter invalid data to see specific validation messages
+- Form blocks submission until all errors are resolved
+
+**2. Successful validation demonstration:**
+
+- Fill all fields with valid data
+- Form submits successfully with confirmation dialog
+- Success feedback with submitted data summary
+
+**3. User Experience Features:**
+
+- Real-time validation feedback
+- Password visibility toggles
+- Input formatters (digits-only for phone)
+- Reset functionality to clear form
+- Snackbar notifications for success/error states
+
+### Usage
+
+Access the form from the main menu by tapping "Profile Details Form". The screen includes built-in demo instructions to guide testing of validation scenarios.
+
+**Navigation integration in main.dart:**
+
+```dart
+ElevatedButton(
+  onPressed: () => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const ProfileFormScreen()),
+  ),
+  child: const Text('Profile Details Form'),
+),
+```
+
+### Validation Architecture
+
+The form uses Flutter's built-in `Form` widget with custom validator functions for each field. Key architectural decisions:
+
+- **Separation of concerns**: Each validation rule in dedicated method
+- **Real-time feedback**: Password matching updates on both field changes
+- **Input constraints**: Formatters prevent invalid input entry
+- **User feedback**: Multiple feedback channels (field errors, snackbars, dialogs)
+
+Screenshots to include in PR:
+
+- `screenshots/profile_form_empty.png` — Form with validation errors
+- `screenshots/profile_form_success.png` — Successful form submission
+- `screenshots/profile_form_filled.png` — Form with valid data
+
+Reflection:
+
+- Form validation improves data quality and user experience by providing immediate feedback
+- Input formatters and constraints prevent invalid data entry at the source
+- Multiple validation layers (client-side formatting, field validation, form submission) ensure robust data handling
+- This implementation demonstrates industry best practices for form validation in mobile applications
