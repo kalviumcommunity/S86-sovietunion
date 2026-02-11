@@ -497,11 +497,7 @@ The form uses Flutter's built-in `Form` widget with custom validator functions f
 - **Input constraints**: Formatters prevent invalid input entry
 - **User feedback**: Multiple feedback channels (field errors, snackbars, dialogs)
 
-Screenshots to include in PR:
 
-- `screenshots/profile_form_empty.png` — Form with validation errors
-- `screenshots/profile_form_success.png` — Successful form submission
-- `screenshots/profile_form_filled.png` — Form with valid data
 
 Reflection:
 
@@ -509,3 +505,4 @@ Reflection:
 - Input formatters and constraints prevent invalid data entry at the source
 - Multiple validation layers (client-side formatting, field validation, form submission) ensure robust data handling
 - This implementation demonstrates industry best practices for form validation in mobile applications
+
