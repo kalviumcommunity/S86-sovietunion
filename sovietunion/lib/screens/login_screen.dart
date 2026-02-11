@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sovietunion/services/auth_service.dart';
 import 'package:sovietunion/screens/dashboard.dart';
 import 'package:sovietunion/screens/signup_screen.dart';
+import 'package:sovietunion/screens/state_management_selection_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -69,6 +70,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: const TextStyle(color: Colors.red),
                 ),
               ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const StateManagementSelectionScreen(),
+                  ),
+                );
+              },
+              child: const Text('📚 Learn State Management'),
+            ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
