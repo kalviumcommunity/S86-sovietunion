@@ -1,9 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'screens/login_screen.dart';
 import 'firebase_options.dart';
 import 'services/notification_service.dart';
+import 'providers/theme_state.dart';
+import 'theme/app_themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +20,14 @@ void main() async {
 
   // Initialize notification service (permissions, listeners, token)
   await NotificationService().initialize();
-  runApp(const MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final themeState = ThemeState(prefs);
+  themeState.loadFromPrefs();
+
+  runApp(ChangeNotifierProvider<ThemeState>.value(
+    value: themeState,
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -23,13 +35,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeState = context.watch<ThemeState>();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Soviet Union',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        scaffoldBackgroundColor: Colors.grey[200],
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: themeState.mode,
       home: const LoginScreen(),
     );
   }

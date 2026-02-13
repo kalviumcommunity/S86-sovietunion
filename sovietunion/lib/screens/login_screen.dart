@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sovietunion/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:sovietunion/providers/theme_state.dart';
 import 'package:sovietunion/screens/dashboard.dart';
 import 'package:sovietunion/screens/signup_screen.dart';
 import 'package:sovietunion/screens/state_management_selection_screen.dart';
@@ -87,6 +89,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 );
               },
               child: const Text('Don\'t have an account? Sign Up'),
+            ),
+            const SizedBox(height: 12),
+            // Theme selector (System / Light / Dark)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Theme:'),
+                const SizedBox(width: 12),
+                Consumer<ThemeState>(builder: (context, themeState, _) {
+                  return DropdownButton<ThemeMode>(
+                    value: themeState.mode,
+                    items: const [
+                      DropdownMenuItem(value: ThemeMode.system, child: Text('System')),
+                      DropdownMenuItem(value: ThemeMode.light, child: Text('Light')),
+                      DropdownMenuItem(value: ThemeMode.dark, child: Text('Dark')),
+                    ],
+                    onChanged: (mode) {
+                      if (mode != null) themeState.setMode(mode);
+                    },
+                  );
+                })
+              ],
             ),
           ],
         ),
